@@ -8,3 +8,9 @@ target_sources(${PROJECT_NAME} PRIVATE
     callbacks.cpp
     window.cpp
 )
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+  ${CMAKE_SOURCE_DIR}
+)
+
+add_subdirectory(pixels)

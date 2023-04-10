@@ -44,6 +44,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
 # Base dependencies
 #-------------------------------------------------------------------------------
 find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIR})
 find_package(Threads REQUIRED)
 
 
@@ -73,14 +74,14 @@ target_link_libraries(${PROJECT_NAME} glfw)
 # GLAD
 #-------------------------------------------------------------------------------
 set(GLAD_SOURCE_DIR "deps/glad")
-# Include it for use in project
-include_directories(${PROJECT_NAME} PUBLIC
-    ${GLAD_SOURCE_DIR}/include
-)
 # Declare it as a static library
 add_library(glad STATIC
-    ${GLAD_SOURCE_DIR}/src/gl.c
-    ${GLAD_SOURCE_DIR}/include
+  ${GLAD_SOURCE_DIR}/src/gl.c
+)
+target_include_directories(glad PRIVATE ${GLAD_SOURCE_DIR}/include)
+# Include it for use in project
+target_include_directories(${PROJECT_NAME} PRIVATE
+  ${GLAD_SOURCE_DIR}/include
 )
 # Link it to project
 target_link_libraries(${PROJECT_NAME} glad)
@@ -89,4 +90,3 @@ target_link_libraries(${PROJECT_NAME} glad)
 # Add source
 #-------------------------------------------------------------------------------
 add_subdirectory(src)
-add_subdirectory(src/pixels)
