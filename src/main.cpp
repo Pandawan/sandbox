@@ -12,6 +12,9 @@ int main(__unused int argc, __unused char* argv[])
     init_glfw();
 
     GLFWwindow* window = create_window(800, 600, "Sandbox");
+    
+    /* Tether callback functions here. */
+    glfwSetMouseButtonCallback(window, (GLFWmousebuttonfun)glfw_mouse_callback);    
 
     while (!glfwWindowShouldClose(window))
     {
@@ -24,6 +27,7 @@ int main(__unused int argc, __unused char* argv[])
 
         /* Poll for and process events */
         glfwPollEvents();
+        
     }
 
     glfwDestroyWindow(window);

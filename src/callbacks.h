@@ -15,4 +15,14 @@ void glfw_error_callback(int error, const char* description);
  */
 void glfw_resize_callback(GLFWwindow* window, int width, int height);
 
+/**
+ * This callback function is the entry point for any logic tied to the mouse
+ * input commands. 
+ * @button see https://www.glfw.org/docs/3.0/group__buttons.html for types.
+ * @action is either GLFW_PRESS or GLFW_RELEASE.
+ * @mod is bit field describing which modifier keys were held down.
+ *   See https://www.glfw.org/docs/3.0/group__mods.html more information
+ */
+void glfw_mouse_callback(GLFWwindow* window, int button, int action, int mod);
+
 #endif
