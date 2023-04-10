@@ -85,6 +85,17 @@ add_library(glad STATIC
 # Link it to project
 target_link_libraries(${PROJECT_NAME} glad)
 
+
+#-------------------------------------------------------------------------------
+# GLFWPP
+#-------------------------------------------------------------------------------
+set(GLFWPP_SOURCE_DIR "deps/glfwpp")
+# Include it for use in project
+add_subdirectory(${GLFWPP_SOURCE_DIR})
+# Link it to project
+target_link_libraries(${PROJECT_NAME} GLFWPP)
+
+
 #-------------------------------------------------------------------------------
 # Add source
 #-------------------------------------------------------------------------------
