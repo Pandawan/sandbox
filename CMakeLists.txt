@@ -89,3 +89,4 @@ target_link_libraries(${PROJECT_NAME} glad)
 # Add source
 #-------------------------------------------------------------------------------
 add_subdirectory(src)
+add_subdirectory(src/pixels)
