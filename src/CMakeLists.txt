@@ -3,9 +3,11 @@ cmake_minimum_required(VERSION 3.14)
 #-------------------------------------------------------------------------------
 # Add source files
 #-------------------------------------------------------------------------------
+# NOTE: Please alphabetize these
 target_sources(${PROJECT_NAME} PRIVATE 
-    main.cpp
     callbacks.cpp
+    main.cpp
+    grid.cpp
     window.cpp
 )
 
@@ -13,4 +15,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   ${CMAKE_SOURCE_DIR}
 )
 
-add_subdirectory(pixels)
+#-------------------------------------------------------------------------------
+# Add subdirectories
+#-------------------------------------------------------------------------------
+add_subdirectory(render)

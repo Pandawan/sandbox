@@ -60,9 +60,9 @@ set(GLFW_INSTALL OFF CACHE BOOL "")
 
 # Download GLFW from git repo
 FetchContent_Declare(
-    glfw
-    GIT_REPOSITORY https://github.com/glfw/glfw.git
-    GIT_TAG 3.3.8
+  glfw
+  GIT_REPOSITORY https://github.com/glfw/glfw.git
+  GIT_TAG 3.3.8
 )
 # Declare it as a library
 FetchContent_MakeAvailable(glfw)
@@ -85,6 +85,22 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 # Link it to project
 target_link_libraries(${PROJECT_NAME} glad)
+
+
+#-------------------------------------------------------------------------------
+# GLM
+#-------------------------------------------------------------------------------
+# Download GLFW from git repo
+FetchContent_Declare(
+  glm
+  GIT_REPOSITORY https://github.com/g-truc/glm.git
+  GIT_TAG 0.9.9.8
+)
+# Declare it as a library
+FetchContent_MakeAvailable(glm)
+
+# Link it to project
+target_link_libraries(${PROJECT_NAME} glm)
 
 #-------------------------------------------------------------------------------
 # Add source
