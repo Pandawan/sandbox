@@ -14,25 +14,32 @@ int main(__unused int argc, __unused char* argv[])
 {
     init_glfw();
 
-    GLFWwindow* window = create_window(800, 600, "Sandbox");
+    GLFWwindow* window = create_window(600, 600, "Sandbox");
     
     /* Tether callback functions here. */
     glfwSetMouseButtonCallback(window, (GLFWmousebuttonfun)glfw_mouse_callback);
 
     Grid grid = Grid(100, 100);
-    Quad quad = Quad();
+    Quad quad = Quad(window, GL_TEXTURE0, grid.get_texture());
 
-    // Generate a texture from the grid
-    GLuint texture = grid.generate_texture();
-    
+    double last_frame = 0;
+
     while (!glfwWindowShouldClose(window))
     {
+        double current_frame = glfwGetTime();
+        double delta_time = current_frame - last_frame;
+        last_frame = current_frame;
+
+        std::cout << "Delta Time: " << delta_time << std::endl;
+
         /* Render here */
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Render that texture onto a quad
-        quad.render(GL_TEXTURE0, texture);
+        // Update grid simulation
+        grid.update(delta_time);
+        // Render quad with updated texture
+        quad.render();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

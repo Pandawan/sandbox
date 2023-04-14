@@ -1,5 +1,9 @@
 #include "quad.h"
 
+#include <algorithm>
+
+#include <glm/mat4x4.hpp>
+
 const float vertices[] = {
     // positions          // colors           // texture coords
      1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
@@ -12,14 +16,20 @@ const unsigned int indices[] = {
     1, 2, 3  // second triangle
 };
 
-Quad::Quad() 
-    : shader("../shaders/default.vs", "../shaders/default.fs")
+Quad::Quad(
+    GLFWwindow* window, 
+    GLenum texture_unit, GLuint texture
+) : 
+    shader("../shaders/default.vs", "../shaders/default.fs"), 
+    window(window),
+    texture_unit(texture_unit), texture(texture)
 {
     this->init();
 }
 
 Quad::~Quad()
 {
+    glfwMakeContextCurrent(this->window);
     glDeleteVertexArrays(1, &this->vao);
     glDeleteBuffers(1, &this->vbo);
     glDeleteBuffers(1, &this->ebo);
@@ -27,6 +37,7 @@ Quad::~Quad()
 
 void Quad::init()
 {
+    glfwMakeContextCurrent(this->window);
     glGenVertexArrays(1, &this->vao);
     glGenBuffers(1, &this->vbo);
     glGenBuffers(1, &this->ebo);
@@ -50,7 +61,9 @@ void Quad::init()
     glEnableVertexAttribArray(2);
 }
 
-void Quad::render(GLenum texture_unit, GLuint texture) {
+void Quad::render()
+{
+    glfwMakeContextCurrent(this->window);
     // Bind textures on given texture unit
     glActiveTexture(texture_unit);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -60,9 +73,31 @@ void Quad::render(GLenum texture_unit, GLuint texture) {
     glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ebo);
 
+    // Compute rendering size
+    int window_width, window_height;
+    glfwGetWindowSize(this->window, &window_width, &window_height);
+    double window_aspect_ratio = (double)window_width / (double)window_height;
+
+    int texture_width, texture_height;
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &texture_width);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &texture_height);
+    double texture_aspect_ratio = (double)texture_width / (double)texture_height;
+
+    // Source: https://bumbershootsoft.wordpress.com/2017/11/26/gtk3-aspect-corrected-image-scaling-with-opengl/
+    double scale_width, scale_height;
+    if (window_aspect_ratio < texture_aspect_ratio) {
+        scale_width = 1;
+        scale_height = window_aspect_ratio / texture_aspect_ratio;
+    } 
+    else {
+        scale_width = texture_aspect_ratio / window_aspect_ratio;
+        scale_height = 1;
+    }
+
     // Bind shader
     shader.use();
     shader.setInt("uTexture", 0);
+    glUniform4f(glGetUniformLocation(shader.ID, "uScale"), scale_width, scale_height, 1.0f, 1.0f);
 
     // Draw the quad
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

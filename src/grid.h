@@ -22,6 +22,9 @@ private:
     /** OpenGL id to the generated grid texture. */
     GLuint texture;
 
+    /** Generate the texture from the current grid state. */
+    void generate_texture();
+
 public:
 
     Grid(std::size_t width, std::size_t height);
@@ -31,6 +34,9 @@ public:
 
     Cell& get_cell(glm::ivec2 position);
 
-    GLuint generate_texture();
+    GLuint get_texture();
+
+    /** Simulate the grid for one tick. */
+    void update(double delta_time);
 };
 #endif
