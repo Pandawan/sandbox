@@ -10,6 +10,7 @@ typedef bool Cell;
 
 /**
  * The Grid. A ditigal frontier.
+ * One small step for sand, one giant leap for sand-kind
  */
 class Grid {
 
