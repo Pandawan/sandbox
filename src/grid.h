@@ -5,8 +5,9 @@
 #include <glm/vec2.hpp>
 
 #include "gl.h"
+#include "pixels/pixel.h"
 
-typedef bool Cell;
+typedef Pixel Cell;
 
 /**
  * The Grid. A ditigal frontier.
@@ -26,7 +27,13 @@ private:
     /** Generate the texture from the current grid state. */
     void generate_texture();
 
+    /** Updates each Cell element within the grid. */
+    void update_grid();
+
 public:
+    
+    // Determines what kind of cell we're going to place down.
+    CellType toggled_cell;
 
     Grid(std::size_t width, std::size_t height);
     ~Grid();

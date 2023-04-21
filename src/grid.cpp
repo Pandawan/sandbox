@@ -1,5 +1,6 @@
 #include "grid.h"
 #include "gl.h"
+#include <iostream>
 
 /*
     RESOURCES
@@ -53,11 +54,10 @@ void Grid::generate_texture() {
 
     for (std::size_t y = 0; y < this->height; ++y) {
         for (std::size_t x = 0; x < this->width; ++x) {
-            // if (x % 2 == 0 && y % 2 == 0) {
-                data[((y * this->width) + x) * 3] = (float)x / (float)this->width;
-                data[((y * this->width) + x) * 3 + 1] = (float)y / (float)this->height;
-                data[((y * this->width) + x) * 3 + 2] = 0.5f;
-            // }
+            Cell cell = get_cell(glm::ivec2(x, y));
+            data[((y * this->width) + x) * 3] = cell.RGBA.r;
+            data[((y * this->width) + x) * 3 + 1] = cell.RGBA.g;
+            data[((y * this->width) + x) * 3 + 2] = cell.RGBA.b;
         }
     }
 
@@ -69,6 +69,20 @@ void Grid::generate_texture() {
     delete[] data;
 }
 
+void Grid::update_grid()
+{
+    for (std::size_t y = 0; y < this->height; ++y) {
+        for (std::size_t x = 0; x < this->width; ++x) {
+            glm::ivec2 idx = glm::ivec2(x, y);
+            Cell cell = get_cell(idx);
+            cell.configure_rgba();
+            set_cell(idx, cell);
+        }
+    }
+}
+
 void Grid::update(__unused double delta_time) {
+    // We update the position of the Cells  
+//    update_grid();
     generate_texture();
 }

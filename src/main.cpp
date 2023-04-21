@@ -18,6 +18,7 @@ int main(__unused int argc, __unused char* argv[])
     
     /* Tether callback functions here. */
     glfwSetMouseButtonCallback(window, (GLFWmousebuttonfun)glfw_mouse_callback);
+    glfwSetKeyCallback(window, (GLFWkeyfun)key_callback);
 
     Grid grid = Grid(100, 100);
     Quad quad = Quad(window, GL_TEXTURE0, grid.get_texture());
@@ -30,7 +31,7 @@ int main(__unused int argc, __unused char* argv[])
         double delta_time = current_frame - last_frame;
         last_frame = current_frame;
 
-        std::cout << "Delta Time: " << delta_time << std::endl;
+//        std::cout << "Delta Time: " << delta_time << std::endl;
 
         /* Render here */
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -43,9 +44,11 @@ int main(__unused int argc, __unused char* argv[])
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
-
+        
         /* Poll for and process events */
-        glfwPollEvents(); 
+        glfwPollEvents();
+        toggle_cell(&grid);
+        check_mouse_down(window, &grid, 600, 600);
     }
 
     glfwDestroyWindow(window);

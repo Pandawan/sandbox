@@ -2,6 +2,13 @@
 #define CALLBACKS_H
 
 #include "gl.h"
+#include "grid.h"
+
+/*
+ * We have this class to store the different types of cells dynamically
+ */
+
+typedef Pixel Cell;
 
 /**
  * Callback when GLFW encounters an error.
@@ -24,5 +31,22 @@ void glfw_resize_callback(GLFWwindow* window, int width, int height);
  *   See https://www.glfw.org/docs/3.0/group__mods.html more information
  */
 void glfw_mouse_callback(GLFWwindow* window, int button, int action, int mod);
+
+/**
+ * This function is used to check the position of the mouse cursor during a drag
+ * action.
+ */
+void check_mouse_down(GLFWwindow* window, Grid *grid, size_t width, size_t height);
+
+/*
+ * Callback function for keyboard input.
+ */
+void key_callback(GLFWwindow* window, int key, __unused int scancode, __unused int action, __unused int mods);
+
+
+/**
+ * Tethers the type of Cell to Grid.
+ */
+void toggle_cell(Grid* grid);
 
 #endif
