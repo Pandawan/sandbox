@@ -1,7 +1,6 @@
 #include "callbacks.h"
 #include "pixels/pixel.h"
 
-#include <iostream>
 #include <sstream>
 #include <stdexcept>
 
@@ -65,10 +64,6 @@ void check_mouse_down(GLFWwindow* window, Grid* grid, size_t width, size_t heigh
         cell.cell_type = cell_type;
         cell.configure_rgba();
         grid->set_cell(idx, cell);
-        std::cout << grid->get_cell(idx).RGBA.r
-                  << grid->get_cell(idx).RGBA.g
-                  << grid->get_cell(idx).RGBA.b
-        << std::endl;
     }
 }
 
