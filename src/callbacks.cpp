@@ -1,5 +1,5 @@
 #include "callbacks.h"
-#include "pixels/pixel.h"
+#include "cells/cell.h"
 
 #include <sstream>
 #include <stdexcept>
@@ -15,6 +15,7 @@ bool left_click_down = false;
 double prev_xpos = 0;
 double prev_ypos = 0;
 CellType cell_type;
+
 
 void glfw_error_callback(int error, const char* description)
 {
@@ -80,6 +81,10 @@ void key_callback(__unused GLFWwindow* window, int key, __unused int scancode, i
     else if (key == GLFW_KEY_2 && action == GLFW_PRESS)
     {
         cell_type = WATER;
+    }
+    else if (key == GLFW_KEY_Q && action == GLFW_PRESS)
+    {
+        cell_type = UI;
     }
 }
 

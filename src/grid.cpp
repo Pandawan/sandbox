@@ -9,17 +9,10 @@
 
 */
 
-
-Grid::Grid(std::size_t width, std::size_t height) {
-    this->width = width;
-    this->height = height;
-
-    // Initialize cell grid
-    this->grid = new Cell[height * width];
-
-    // Initialize texture
-    glGenTextures(1, &this->texture);
-    glBindTexture(GL_TEXTURE_2D, this->texture);
+void init_texture(GLuint* texture)
+{
+    glGenTextures(1, &*texture);
+    glBindTexture(GL_TEXTURE_2D, *texture);
     // Warp texture
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -29,7 +22,17 @@ Grid::Grid(std::size_t width, std::size_t height) {
     // Don't allow mipmaps
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+}
 
+Grid::Grid(std::size_t width, std::size_t height) {
+    this->width = width;
+    this->height = height;
+
+    // Initialize cell grid
+    this->grid = new Cell[height * width];
+
+    // Initialize texture
+    init_texture(&this->texture);
 }
 
 Grid::~Grid() {
@@ -82,7 +85,7 @@ void Grid::update_grid()
 }
 
 void Grid::update(__unused double delta_time) {
-    // We update the position of the Cells  
+    // We update the position of the Cells
 //    update_grid();
     generate_texture();
 }

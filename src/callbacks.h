@@ -3,12 +3,11 @@
 
 #include "gl.h"
 #include "grid.h"
+#include "render/quad.h"
 
 /*
  * We have this class to store the different types of cells dynamically
  */
-
-typedef Pixel Cell;
 
 /**
  * Callback when GLFW encounters an error.
@@ -48,5 +47,10 @@ void key_callback(GLFWwindow* window, int key, __unused int scancode, __unused i
  * Tethers the type of Cell to Grid.
  */
 void toggle_cell(Grid* grid);
+
+/*
+ * Signals to the Quad to render the UI
+ */
+void display_ui(__unused Quad* quad);
 
 #endif

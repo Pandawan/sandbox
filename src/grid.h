@@ -5,9 +5,7 @@
 #include <glm/vec2.hpp>
 
 #include "gl.h"
-#include "pixels/pixel.h"
-
-typedef Pixel Cell;
+#include "cells/cell.h"
 
 /**
  * The Grid. A ditigal frontier.
