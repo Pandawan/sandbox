@@ -81,11 +81,7 @@ void Grid::update_grid()
             Cell cell = get_cell(idx);
             switch (cell.cell_type) {
                 case (SAND):
-                    if (!move_down(cell, x, y)) {
-                        if (!move_down_left(cell, x, y)) {
-                             move_down_right(cell, x, y);
-                        }
-                    }
+                    move_logic_solid(cell, x, y);
                     break;
                 case (WATER):
                     if (!move_down(cell, x, y)) {
@@ -126,38 +122,71 @@ bool Grid::move(Cell cell,const size_t &old_x, const size_t &old_y, const size_t
     return false;
 }
 
-bool Grid::move_left(Cell cell,const size_t &x, const size_t &y) {
-    return move(cell, x, y, x-1, y);
+bool Grid::move_left(Cell cell, const size_t &x, const size_t &y) {
+    return move(cell, x, y, x - 1, y);
 }
 
-bool Grid::move_right(Cell cell,const size_t &x, const size_t &y) {
-    return move(cell, x, y, x+1, y);
+bool Grid::move_right(Cell cell, const size_t &x, const size_t &y) {
+    return move(cell, x, y, x + 1, y);
 }
 
-bool Grid::move_down(Cell cell,const size_t &x, const size_t &y) {
-    return move(cell, x, y, x, y-1);
+bool Grid::move_down(Cell cell, const size_t &x, const size_t &y) {
+    return move(cell, x, y, x, y - 1);
 }
 
-bool Grid::move_up(Cell cell,const size_t &x, const size_t &y) {
-    return move(cell, x, y, x, y+1);
+bool Grid::move_up(Cell cell, const size_t &x, const size_t &y) {
+    return move(cell, x, y, x, y + 1);
 }
 
-bool Grid::move_down_left(Cell cell,const size_t &x, const size_t &y) {
-    return move(cell, x, y, x-1, y-1);
+bool Grid::move_down_left(Cell cell, const size_t &x, const size_t &y) {
+    return move(cell, x, y, x - 1, y - 1);
 }
 
-bool Grid::move_down_right(Cell cell,const size_t &x, const size_t &y) {
-    return move(cell, x, y, x+1, y-1);
+bool Grid::move_down_right(Cell cell, const size_t &x, const size_t &y) {
+    return move(cell, x, y, x + 1, y - 1);
 }
 
-bool Grid::move_up_left(Cell cell,const size_t &x, const size_t &y) {
-    return move(cell, x, y, x-1, y+1);
+bool Grid::move_up_left(Cell cell, const size_t &x, const size_t &y) {
+    return move(cell, x, y, x - 1, y + 1);
 }
 
-bool Grid::move_up_right(Cell cell,const size_t &x, const size_t &y) {
-    return move(cell, x, y, x+1, y+1);
+bool Grid::move_up_right(Cell cell, const size_t &x, const size_t &y) {
+    return move(cell, x, y, x + 1, y + 1);
 }
 
+bool Grid::swap_cell(Cell cell,const size_t &old_x, const size_t &old_y, const size_t &new_x, const size_t &new_y) {
+    if (new_x < 0  || new_x > this->width - 1 || new_y < 0 || new_y > this->height - 1) 
+        return false;
+
+    Cell neighbor = get_cell(glm::ivec2(new_x, new_y));
+    Cell temp = neighbor;
+ 
+    neighbor.cell_type = cell.cell_type;
+    neighbor.set_color();
+
+    cell.cell_type = temp.cell_type;
+    cell.set_color();
+
+    set_cell(glm::ivec2(new_x, new_y), neighbor);
+    set_cell(glm::ivec2(old_x, old_y), cell);
+    
+    return true;
+}
+
+bool Grid::move_logic_solid(Cell cell, const size_t &cur_x, const size_t &cur_y) {
+    Cell neighbor_below = get_cell(glm::ivec2(cur_x, cur_y - 1));
+
+    if (neighbor_below.cell_type == EMPTY) {
+        return move_down(cell, cur_x, cur_y);
+    } else if (neighbor_below.cell_state == liquid) {
+        return swap_cell(cell, cur_x, cur_y, cur_x, cur_y-1);
+    } else if (neighbor_below.cell_state == immovable_solid ||
+        neighbor_below.cell_state == movable_solid)   {
+            if (!move_down_left(cell, cur_x, cur_y))
+                return move_down_right(cell, cur_x, cur_y);
+    }
+    return false;
+}
 
 void Grid::update(__unused double delta_time) {
     // We update the position of the Cells

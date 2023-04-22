@@ -55,6 +55,10 @@ private:
     /** Move Cell from current location to diagonally up right */
     bool move_up_right(Cell cell, const size_t &x, const size_t &y);
 
+    bool move_logic_solid(Cell cell, const size_t &cur_x, const size_t &cur_y);
+
+    bool swap_cell(Cell cell,const size_t &old_x, const size_t &old_y, const size_t &new_x, const size_t &new_y);
+
 public:
     // Determines what kind of cell we're going to place down.
     CellType toggled_cell;
