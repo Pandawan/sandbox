@@ -81,41 +81,52 @@ void Grid::update_grid()
             Cell cell = get_cell(idx);
             switch (cell.cell_type) {
                 case (SAND):
-                    if (y - 1 >= 0) {
-                        Cell neighbor = get_cell(glm::ivec2(x, y - 1));
-                        if (neighbor.cell_type == EMPTY)
-                        {
-                            neighbor.cell_type = SAND;
-                            neighbor.configure_rgba();
-                            cell.cell_type = EMPTY;
-                            set_cell(glm::ivec2(x, y - 1), neighbor);
-                        }
-                        else if (x - 1 > 0 && get_cell(glm::ivec2(x - 1, y - 1)).cell_type == EMPTY)
-                        {
-                            neighbor = get_cell(glm::ivec2(x - 1, y - 1));
-                            neighbor.cell_type = SAND;
-                            neighbor.configure_rgba();
-                            cell.cell_type = EMPTY;
-                            set_cell(glm::ivec2(x - 1, y - 1), neighbor);
-                        }
-                        else if (x + 1 < this->width && get_cell(glm::ivec2(x + 1, y - 1)).cell_type == EMPTY)
-                        {
-                            neighbor = get_cell(glm::ivec2(x + 1, y - 1));
-                            neighbor.cell_type = SAND;
-                            neighbor.configure_rgba();
-                            cell.cell_type = EMPTY;
-                            set_cell(glm::ivec2(x + 1, y - 1), neighbor);
+                    if (!move_down(cell, x, y)) {
+                        if (!move_down_left(cell, x, y)) {
+                             move_down_right(cell, x, y);
                         }
                     }
                     break;
                 default:
                     break;
             }
-            cell.configure_rgba();
-            set_cell(idx, cell);
         }
     }
 }
+
+bool Grid::move(Cell cell,const size_t &old_x, const size_t &old_y, const size_t &new_x, const size_t &new_y) {
+
+    if (new_x < 0  || new_x > this->width || new_y < 0 || new_y > this->height) 
+        return false;
+
+    Cell neighbor = get_cell(glm::ivec2(new_x, new_y));
+
+    if (neighbor.cell_type == EMPTY) {
+        neighbor.cell_type = cell.cell_type;
+        neighbor.configure_rgba();
+
+        cell.cell_type = EMPTY;
+        cell.configure_rgba();
+
+        set_cell(glm::ivec2(new_x, new_y), neighbor);
+        set_cell(glm::ivec2(old_x, old_y), cell);
+        return true;
+    }
+    return false;
+}
+
+bool Grid::move_down(Cell cell,const size_t &x, const size_t &y) {
+    return move(cell, x, y, x, y-1);
+}
+
+bool Grid::move_down_left(Cell cell,const size_t &x, const size_t &y) {
+    return move(cell, x, y, x-1, y-1);
+}
+
+bool Grid::move_down_right(Cell cell,const size_t &x, const size_t &y) {
+    return move(cell, x, y, x+1, y-1);
+}
+
 
 void Grid::update(__unused double delta_time) {
     // We update the position of the Cells
