@@ -11,44 +11,36 @@ Cell::~Cell()
 
 }
 
-void Cell::configure_rgba()
+void Cell::set_color()
 {
     switch(cell_type)
     {
         case (EMPTY):
-            RGBA.r = 0;
-            RGBA.g = 0;
-            RGBA.b = 0;
-            RGBA.a = 0;
+            set_rgba(0, 0, 0, 0);
             cell_state = none;
             break;
         case (SAND):
-            RGBA.r = 0.76;
-            RGBA.g = 0.68;
-            RGBA.b = 0.50;
-            RGBA.a = 0;
+            set_rgba(194, 178, 128, 0);
             cell_state = movable_solid;
             break;
         case (WATER):
-            RGBA.r = 0.51;
-            RGBA.g = 0.84;
-            RGBA.b = 0.93;
-            RGBA.a = 0; // For now, water is opaque
+            set_rgba(116,204, 244, 0);
             cell_state = liquid;
             break;
         case (WOOD):
-            RGBA.r = 0.42;
-            RGBA.g = 0.30;
-            RGBA.b = 0.21;
-            RGBA.a = 0;
+            set_rgba(101, 56, 24, 0);
             break;
         case (UI):
-            RGBA.r = 0.33;
-            RGBA.g = 0.33;
-            RGBA.b = 0.33;
-            RGBA.a = 0;
+            set_rgba(85.33, 85.33, 85.33, 0);
             break;
         default:
             break;
     }
 }
+
+void Cell::set_rgba(const float &r, const float &g, const float &b, const float &a) {
+    RGBA.r = r / 256;
+    RGBA.g = g / 256;
+    RGBA.b = b / 256;
+    RGBA.a = a / 256; 
+} 

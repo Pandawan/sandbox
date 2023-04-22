@@ -114,10 +114,10 @@ bool Grid::move(Cell cell,const size_t &old_x, const size_t &old_y, const size_t
 
     if (neighbor.cell_type == EMPTY) {
         neighbor.cell_type = cell.cell_type;
-        neighbor.configure_rgba();
+        neighbor.set_color();
 
         cell.cell_type = EMPTY;
-        cell.configure_rgba();
+        cell.set_color();
 
         set_cell(glm::ivec2(new_x, new_y), neighbor);
         set_cell(glm::ivec2(old_x, old_y), cell);

@@ -62,9 +62,12 @@ void check_mouse_down(GLFWwindow* window, Grid* grid, size_t width, size_t heigh
         y = 100 - prev_ypos / height * 100;
         glm::ivec2 idx = glm::vec2(x, y);
         Cell cell = grid->get_cell(idx);
-        cell.cell_type = cell_type;
-        cell.configure_rgba();
-        grid->set_cell(idx, cell);
+
+        if (cell.cell_type == EMPTY) {
+            cell.cell_type = cell_type;
+            cell.set_color();
+            grid->set_cell(idx, cell);
+        }   
     }
 }
 

@@ -38,7 +38,10 @@ class Cell
         StateOfMatter cell_state;
         
         /* Given this pixel's cell type, we'll set the corresponding RGBA values*/
-        void configure_rgba();
+        void set_color();
+
+        /* Given color in r, g, b, set them according to glm RGBA*/
+        void set_rgba(const float &r, const float &g, const float &b, const float &a);
 };
 
 #endif
