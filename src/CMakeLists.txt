@@ -19,3 +19,4 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 # Add subdirectories
 #-------------------------------------------------------------------------------
 add_subdirectory(render)
+add_subdirectory(cells)
