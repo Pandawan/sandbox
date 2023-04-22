@@ -72,12 +72,45 @@ void Grid::generate_texture() {
     delete[] data;
 }
 
+// TODO: make the switch case neater cause it's pretty fugly rn
 void Grid::update_grid()
 {
     for (std::size_t y = 0; y < this->height; ++y) {
         for (std::size_t x = 0; x < this->width; ++x) {
             glm::ivec2 idx = glm::ivec2(x, y);
             Cell cell = get_cell(idx);
+            switch (cell.cell_type) {
+                case (SAND):
+                    if (y - 1 >= 0) {
+                        Cell neighbor = get_cell(glm::ivec2(x, y - 1));
+                        if (neighbor.cell_type == EMPTY)
+                        {
+                            neighbor.cell_type = SAND;
+                            neighbor.configure_rgba();
+                            cell.cell_type = EMPTY;
+                            set_cell(glm::ivec2(x, y - 1), neighbor);
+                        }
+                        else if (x - 1 > 0 && get_cell(glm::ivec2(x - 1, y - 1)).cell_type == EMPTY)
+                        {
+                            neighbor = get_cell(glm::ivec2(x - 1, y - 1));
+                            neighbor.cell_type = SAND;
+                            neighbor.configure_rgba();
+                            cell.cell_type = EMPTY;
+                            set_cell(glm::ivec2(x - 1, y - 1), neighbor);
+                        }
+                        else if (x + 1 < this->width && get_cell(glm::ivec2(x + 1, y - 1)).cell_type == EMPTY)
+                        {
+                            neighbor = get_cell(glm::ivec2(x + 1, y - 1));
+                            neighbor.cell_type = SAND;
+                            neighbor.configure_rgba();
+                            cell.cell_type = EMPTY;
+                            set_cell(glm::ivec2(x + 1, y - 1), neighbor);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
             cell.configure_rgba();
             set_cell(idx, cell);
         }
@@ -86,6 +119,6 @@ void Grid::update_grid()
 
 void Grid::update(__unused double delta_time) {
     // We update the position of the Cells
-//    update_grid();
+    update_grid();
     generate_texture();
 }
