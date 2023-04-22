@@ -20,18 +20,27 @@ void Cell::configure_rgba()
             RGBA.g = 0;
             RGBA.b = 0;
             RGBA.a = 0;
+            cell_state = none;
             break;
         case (SAND):
             RGBA.r = 0.76;
             RGBA.g = 0.68;
             RGBA.b = 0.50;
             RGBA.a = 0;
+            cell_state = movable_solid;
             break;
         case (WATER):
             RGBA.r = 0.51;
             RGBA.g = 0.84;
             RGBA.b = 0.93;
             RGBA.a = 0; // For now, water is opaque
+            cell_state = liquid;
+            break;
+        case (WOOD):
+            RGBA.r = 0.42;
+            RGBA.g = 0.30;
+            RGBA.b = 0.21;
+            RGBA.a = 0;
             break;
         case (UI):
             RGBA.r = 0.33;

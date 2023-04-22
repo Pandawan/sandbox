@@ -29,19 +29,33 @@ private:
     void update_grid();
 
     /** Move Cell from current location to new location */
-    bool move(Cell cell,const size_t &cell_x, const size_t &cell_y, const size_t &new_x, const size_t &new_y);
+    bool move(Cell cell, const size_t &cell_x, const size_t &cell_y, const size_t &new_x, const size_t &new_y);
+
+    /** Move Cell from current location to left */
+    bool move_left(Cell cell_type, const size_t &x, const size_t &y);
+
+    /** Move Cell from current location to right */
+    bool move_right(Cell cell_type, const size_t &x, const size_t &y);
 
     /** Move Cell from current location to below */
-    bool move_down(Cell cell_type,const size_t &x, const size_t &y);
+    bool move_down(Cell cell_type, const size_t &x, const size_t &y);
+
+    /** Move Cell from current location to above */
+    bool move_up(Cell cell_type, const size_t &x, const size_t &y);
 
     /** Move Cell from current location to diagonally down left */
-    bool move_down_left(Cell cell,const size_t &x, const size_t &y);
+    bool move_down_left(Cell cell, const size_t &x, const size_t &y);
 
     /** Move Cell from current location to diagonally down right */
-    bool move_down_right(Cell cell,const size_t &x, const size_t &y);
+    bool move_down_right(Cell cell, const size_t &x, const size_t &y);
+
+    /** Move Cell from current location to diagonally up left */
+    bool move_up_left(Cell cell, const size_t &x, const size_t &y);
+
+    /** Move Cell from current location to diagonally up right */
+    bool move_up_right(Cell cell, const size_t &x, const size_t &y);
 
 public:
-    
     // Determines what kind of cell we're going to place down.
     CellType toggled_cell;
 

@@ -87,6 +87,17 @@ void Grid::update_grid()
                         }
                     }
                     break;
+                case (WATER):
+                    if (!move_down(cell, x, y)) {
+                        if (!move_down_left(cell, x, y)) {
+                             if (!move_down_right(cell, x, y)) {
+                                if (!move_left(cell, x, y)) {
+                                    move_right(cell, x, y);
+                                }
+                            }
+                        }
+                    }
+                    break;
                 default:
                     break;
             }
@@ -96,7 +107,7 @@ void Grid::update_grid()
 
 bool Grid::move(Cell cell,const size_t &old_x, const size_t &old_y, const size_t &new_x, const size_t &new_y) {
 
-    if (new_x < 0  || new_x > this->width || new_y < 0 || new_y > this->height) 
+    if (new_x < 0  || new_x > this->width - 1 || new_y < 0 || new_y > this->height - 1) 
         return false;
 
     Cell neighbor = get_cell(glm::ivec2(new_x, new_y));
@@ -115,8 +126,20 @@ bool Grid::move(Cell cell,const size_t &old_x, const size_t &old_y, const size_t
     return false;
 }
 
+bool Grid::move_left(Cell cell,const size_t &x, const size_t &y) {
+    return move(cell, x, y, x-1, y);
+}
+
+bool Grid::move_right(Cell cell,const size_t &x, const size_t &y) {
+    return move(cell, x, y, x+1, y);
+}
+
 bool Grid::move_down(Cell cell,const size_t &x, const size_t &y) {
     return move(cell, x, y, x, y-1);
+}
+
+bool Grid::move_up(Cell cell,const size_t &x, const size_t &y) {
+    return move(cell, x, y, x, y+1);
 }
 
 bool Grid::move_down_left(Cell cell,const size_t &x, const size_t &y) {
@@ -125,6 +148,14 @@ bool Grid::move_down_left(Cell cell,const size_t &x, const size_t &y) {
 
 bool Grid::move_down_right(Cell cell,const size_t &x, const size_t &y) {
     return move(cell, x, y, x+1, y-1);
+}
+
+bool Grid::move_up_left(Cell cell,const size_t &x, const size_t &y) {
+    return move(cell, x, y, x-1, y+1);
+}
+
+bool Grid::move_up_right(Cell cell,const size_t &x, const size_t &y) {
+    return move(cell, x, y, x+1, y+1);
 }
 
 

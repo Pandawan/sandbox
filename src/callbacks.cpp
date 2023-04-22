@@ -82,6 +82,10 @@ void key_callback(__unused GLFWwindow* window, int key, __unused int scancode, i
     {
         cell_type = WATER;
     }
+    else if (key == GLFW_KEY_3 && action == GLFW_PRESS)
+    {
+        cell_type = WOOD;
+    }
     else if (key == GLFW_KEY_Q && action == GLFW_PRESS)
     {
         cell_type = UI;
