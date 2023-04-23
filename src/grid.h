@@ -57,6 +57,9 @@ private:
 
     bool move_logic_solid(Cell cell, const size_t &cur_x, const size_t &cur_y);
 
+    bool move_logic_liquid(Cell cell, const size_t &cur_x, const size_t &cur_y);
+
+    bool flow_down(Cell cell, const size_t &cur_x, const size_t &cur_y);
     bool swap_cell(Cell cell,const size_t &old_x, const size_t &old_y, const size_t &new_x, const size_t &new_y);
 
 public:
