@@ -36,7 +36,7 @@ class Cell
         glm::dvec4 RGBA;
         CellType cell_type;
         StateOfMatter cell_state;
-        
+
         /* Given this pixel's cell type, we'll set the corresponding RGBA values*/
         void set_color();
 

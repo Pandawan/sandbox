@@ -151,15 +151,16 @@ bool Grid::swap_cell(Cell cell,const size_t &old_x, const size_t &old_y, const s
         return false;
 
     Cell neighbor = get_cell(glm::ivec2(new_x, new_y));
-    Cell temp = neighbor;
- 
+    
+    Cell temp = get_cell(glm::ivec2(new_x, new_y));
+
     neighbor.cell_type = cell.cell_type;
     neighbor.set_color();
+    set_cell(glm::ivec2(new_x, new_y), neighbor);
 
+    cell = temp;
     cell.cell_type = temp.cell_type;
     cell.set_color();
-
-    set_cell(glm::ivec2(new_x, new_y), neighbor);
     set_cell(glm::ivec2(old_x, old_y), cell);
     
     return true;
@@ -174,42 +175,14 @@ bool Grid::move_logic_solid(Cell cell, const size_t &cur_x, const size_t &cur_y)
         return swap_cell(cell, cur_x, cur_y, cur_x, cur_y-1);
     } else if (neighbor_below.cell_state == immovable_solid ||
         neighbor_below.cell_state == movable_solid) {
-            if (!move_down_left(cell, cur_x, cur_y))
-                return move_down_right(cell, cur_x, cur_y);
+        if (!move_down_left(cell, cur_x, cur_y))
+            return move_down_right(cell, cur_x, cur_y);
     }
     return false;
 }
 
 bool Grid::move_logic_liquid(Cell cell, const size_t &cur_x, const size_t &cur_y) {
-    Cell neighbor_below = get_cell(glm::ivec2(cur_x, cur_y - 1));
-    Cell neighbor_left = get_cell(glm::ivec2(cur_x - 1, cur_y));
-    Cell neighbor_right = get_cell(glm::ivec2(cur_x + 1, cur_y));
-
-    if (neighbor_below.cell_type == EMPTY) {
-        return move_down(cell, cur_x, cur_y);
-    //} else if (neighbor_below.cell_state == liquid) {
-    //    if (!move_down_left(cell, cur_x, cur_y))
-     //           return move_down_right(cell, cur_x, cur_y);
-        // TODO: mass implementation, remove stuff above
-    } else if (neighbor_below.cell_state == immovable_solid ||
-        neighbor_below.cell_state == movable_solid) {
-            if (!move_down_left(cell, cur_x, cur_y))
-                return move_down_right(cell, cur_x, cur_y);
-    } else if (neighbor_left.cell_type == EMPTY || neighbor_right.cell_type == EMPTY) {
-        if (neighbor_left.cell_type == EMPTY && neighbor_right.cell_type != EMPTY) {
-            return move_left(cell, cur_x, cur_y);
-        } else if (neighbor_right.cell_type == EMPTY && neighbor_left.cell_type != EMPTY) {
-            return move_right(cell, cur_x, cur_y);
-        } else {
-            bool random_left_right = rand()%2;
-            if (random_left_right) {
-                return move_left(cell, cur_x, cur_y);
-            } else {
-                return move_right(cell, cur_x, cur_y);
-            }
-        }
-    } 
-    return false;
+    return flow_down(cell, cur_x, cur_y);
 }
 
 bool Grid::flow_down(Cell cell, const size_t &cur_x, const size_t &cur_y) {
@@ -218,17 +191,28 @@ bool Grid::flow_down(Cell cell, const size_t &cur_x, const size_t &cur_y) {
     Cell neighbor_left = get_cell(glm::ivec2(cur_x - 1, cur_y));
     Cell neighbor_right = get_cell(glm::ivec2(cur_x + 1, cur_y));
     Cell neighbor_down_left = get_cell(glm::ivec2(cur_x - 1, cur_y - 1));
-    Cell neighbor_down_right = get_cell(glm::ivec2(cur_x - 1, cur_y - 1));
+    Cell neighbor_down_right = get_cell(glm::ivec2(cur_x + 1, cur_y - 1));
 
-    
 
     if (neighbor_down.cell_type == EMPTY) {
         return move_down(cell, cur_x, cur_y);
     } else if (neighbor_down_left.cell_type == EMPTY && neighbor_down_right.cell_type != EMPTY) {
+        return move_down_left(cell, cur_x, cur_y);
+    } else if (neighbor_down_left.cell_type != EMPTY && neighbor_down_right.cell_type == EMPTY) {
+        return move_down_right(cell, cur_x, cur_y);
+    } else if (neighbor_down_left.cell_type == EMPTY && neighbor_down_right.cell_type == EMPTY) {
+        bool left_or_right = rand() % 2;
+        return left_or_right ? move_down_left(cell, cur_x, cur_y) : move_down_right(cell, cur_x, cur_y);
+    } else if (neighbor_left.cell_type == EMPTY && neighbor_right.cell_type != EMPTY) {
         return move_left(cell, cur_x, cur_y);
-    } else if (neighbor_down_right.cell_type == EMPTY && neighbor_down_left.cell_type != EMPTY) {
+    } else if (neighbor_left.cell_type != EMPTY && neighbor_right.cell_type == EMPTY) {
         return move_right(cell, cur_x, cur_y);
-    } return true;
+    } else if (neighbor_left.cell_type == EMPTY && neighbor_right.cell_type == EMPTY) {
+        bool left_or_right = rand() % 2;
+        return left_or_right ? move_left(cell, cur_x, cur_y) : move_right(cell, cur_x, cur_y);
+    }
+
+    return false;
 }
 
 void Grid::update(__unused double delta_time) {

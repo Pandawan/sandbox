@@ -55,11 +55,16 @@ private:
     /** Move Cell from current location to diagonally up right */
     bool move_up_right(Cell cell, const size_t &x, const size_t &y);
 
+    /** Logic for solid movement */
     bool move_logic_solid(Cell cell, const size_t &cur_x, const size_t &cur_y);
 
+    /** Logic for liquid movement */
     bool move_logic_liquid(Cell cell, const size_t &cur_x, const size_t &cur_y);
 
+    /** liquid movement to empty cell */
     bool flow_down(Cell cell, const size_t &cur_x, const size_t &cur_y);
+
+    /** Swapping two cells */
     bool swap_cell(Cell cell,const size_t &old_x, const size_t &old_y, const size_t &new_x, const size_t &new_y);
 
 public:
