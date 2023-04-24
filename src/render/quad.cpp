@@ -2,6 +2,7 @@
 
 #include <algorithm>
 
+#include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
 
 const float vertices[] = {
@@ -95,9 +96,9 @@ void Quad::render()
     }
 
     // Bind shader
-    shader.use();
-    shader.setInt("uTexture", 0);
-    glUniform4f(glGetUniformLocation(shader.ID, "uScale"), scale_width, scale_height, 1.0f, 1.0f);
+    shader.Use();
+    shader.setUniform1i("uTexture", 0);
+    shader.setUniform4f("uScale", glm::vec4(scale_width, scale_height, 1.0f, 1.0f));
 
     // Draw the quad
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

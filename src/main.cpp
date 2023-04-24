@@ -31,8 +31,6 @@ int main(__unused int argc, __unused char* argv[])
         double delta_time = current_frame - last_frame;
         last_frame = current_frame;
 
-//        std::cout << "Delta Time: " << delta_time << std::endl;
-
         /* Render here */
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
