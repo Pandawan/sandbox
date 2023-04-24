@@ -19,9 +19,6 @@ private:
     std::size_t height;
     std::size_t width;
 
-    /** OpenGL id to the generated grid texture. */
-    GLuint texture;
-
     /** Generate the texture from the current grid state. */
     void generate_texture();
 
@@ -68,6 +65,9 @@ private:
     bool swap_cell(Cell cell,const size_t &old_x, const size_t &old_y, const size_t &new_x, const size_t &new_y);
 
 public:
+    /** OpenGL id to the generated grid texture. */
+    GLuint texture;
+
     // Determines what kind of cell we're going to place down.
     CellType toggled_cell;
 

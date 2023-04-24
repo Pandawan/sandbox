@@ -3,19 +3,52 @@
 
 #include <sstream>
 #include <stdexcept>
+#include <vector>
 
 // Tech Debt: The state tracking should be done in a class for neatness sake
-
 
 /*
  * We have these variables to keep track of the state of our mouse
  * since GLFW does not explicitly support holding down a mouse button.
  */
 bool left_click_down = false;
+bool toggle_ui = false;
 double prev_xpos = 0;
 double prev_ypos = 0;
+std::vector<Region> ui_region;
 CellType cell_type;
 
+void ui_partition(int grid_width, int grid_height)
+{
+    int width = 0;
+    int height = 0;
+    int width_offset = grid_width / 5;
+    int height_offset = grid_height / 5;
+    // First, initialize the number of UI elements
+    for (int i = EMPTY; i != LAST; i++)
+    {
+        CellType cell_type = static_cast<CellType>(i);
+        // std::cout << cell_type << std::endl;
+        Region cell_region = Region {
+            width, 
+            height, 
+            width + width_offset, 
+            height + height_offset, 
+            cell_type
+        };
+        if (i % 5 == 0 && i != EMPTY)
+        {
+            width = 0;
+            height += height_offset;
+        }
+        else 
+        {
+            width += width_offset;
+        }
+        ui_region.push_back(cell_region);
+        // std::cout << width << " " << width + width_offset << " " << height << " " << height + height_offset << std::endl;
+    }
+}
 
 void glfw_error_callback(int error, const char* description)
 {
@@ -39,6 +72,7 @@ void glfw_mouse_callback(GLFWwindow* window,
     
     if (button == GLFW_MOUSE_BUTTON_LEFT)
     {
+        toggle_cell_type(window);
         if (action == GLFW_RELEASE)
             left_click_down = false;
         else if (action == GLFW_PRESS)
@@ -52,9 +86,31 @@ void glfw_mouse_callback(GLFWwindow* window,
     }
 }
 
+bool within_bounds(int xpos, int ypos, int x, int y, int dx, int dy)
+{
+    return xpos <= dx && x <= xpos && ypos <= dy && y <= ypos;
+}
+
+void toggle_cell_type(GLFWwindow* window)
+{
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+
+    for (size_t i = 0; i < ui_region.size(); i++)
+    {
+        Region region = ui_region[i];
+
+        if (within_bounds((int)xpos, (int)ypos, region.x, region.y, region.dx, region.dy))
+        {
+            cell_type = region.cell_type;
+            // std::cout << "in bounds for " << region.cell_type << std::endl;
+        }
+    }
+}
+
 void check_mouse_down(GLFWwindow* window, Grid* grid, size_t width, size_t height)
 {
-    if (left_click_down)
+    if (left_click_down && !display_ui())
     {
         glfwGetCursorPos(window, &prev_xpos, &prev_ypos);
         int x, y;
@@ -93,6 +149,15 @@ void key_callback(__unused GLFWwindow* window, int key, __unused int scancode, i
     {
         cell_type = UI;
     }
+    else if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
+    {
+        toggle_ui = !toggle_ui;
+    }
+}
+
+bool display_ui()
+{
+    return toggle_ui;
 }
 
 void toggle_cell(Grid* grid)

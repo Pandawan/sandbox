@@ -11,11 +11,13 @@
 
 enum CellType 
 {
+    // KEEP EMPTY AT THE TOP
     EMPTY = 0,
     SAND,
     WATER,
     WOOD,
-    UI
+    UI,
+    LAST
 };
 
 enum StateOfMatter 

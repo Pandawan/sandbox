@@ -5,6 +5,15 @@
 #include "grid.h"
 #include "render/quad.h"
 
+struct Region
+{
+    int x;
+    int y;
+    int dx;
+    int dy;
+    CellType cell_type;
+};
+
 /*
  * We have this class to store the different types of cells dynamically
  */
@@ -48,9 +57,31 @@ void key_callback(GLFWwindow* window, int key, __unused int scancode, __unused i
  */
 void toggle_cell(Grid* grid);
 
+/**
+ * Triggers the UI display 
+ */
+bool display_ui();
+
 /*
  * Signals to the Quad to render the UI
  */
 void display_ui(__unused Quad* quad);
+
+/**
+ * This function will assign the logical placements for the UI buttons
+ */
+void ui_partition(int grid_width, int grid_height);
+
+/**
+ * Allows switching CellType by iterating through a the ui_regions
+ * and getting the corresponding cell_type if there's a match.
+ * Should only be called within regions where UI is enabled. 
+ */
+void toggle_cell_type(GLFWwindow *window);
+
+/**
+ * A helper function used to determine if a mous click is within a rectangular region
+ */
+bool within_bounds(int xpos, int ypos, int x, int y, int dx, int dy);
 
 #endif

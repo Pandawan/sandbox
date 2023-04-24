@@ -54,7 +54,6 @@ GLuint Grid::get_texture() {
 void Grid::generate_texture() {
     // TODO: May be better to allocate one at the start and keep on modifying it
     float* data = new float[(this->height * this->width) * 3];
-
     for (std::size_t y = 0; y < this->height; ++y) {
         for (std::size_t x = 0; x < this->width; ++x) {
             Cell cell = get_cell(glm::ivec2(x, y));
