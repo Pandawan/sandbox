@@ -71,7 +71,6 @@ void Grid::generate_texture() {
     delete[] data;
 }
 
-// TODO: make the switch case neater cause it's pretty fugly rn
 void Grid::update_grid()
 {
     for (std::size_t y = 0; y < this->height; ++y) {
@@ -217,5 +216,10 @@ bool Grid::flow_down(Cell cell, const size_t &cur_x, const size_t &cur_y) {
 void Grid::update(__unused double delta_time) {
     // We update the position of the Cells
     update_grid();
+    generate_texture();
+}
+
+void Grid::ui_update()
+{
     generate_texture();
 }

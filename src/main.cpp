@@ -12,6 +12,8 @@
 
 int WINDOW_WIDTH = 600;
 int WINDOW_HEIGHT = 600;
+int GRID_WIDTH = 100;
+int GRID_HEIGHT = 100;
 
 int main(__unused int argc, __unused char* argv[])
 {
@@ -23,12 +25,46 @@ int main(__unused int argc, __unused char* argv[])
     glfwSetMouseButtonCallback(window, (GLFWmousebuttonfun)glfw_mouse_callback);
     glfwSetKeyCallback(window, (GLFWkeyfun)key_callback);
 
-    Grid grid = Grid(100, 100);
-    Grid ui_grid = Grid(100, 100);
+    Grid grid = Grid(GRID_WIDTH, GRID_HEIGHT);
+    Grid ui_grid = Grid(GRID_WIDTH, GRID_HEIGHT);
     Quad quad = Quad(window, GL_TEXTURE0, grid.get_texture());
     Quad ui_quad = Quad(window, GL_TEXTURE1, ui_grid.get_texture());
     double last_frame = 0;
+
+    // We do this to configure the UI components.
     ui_partition(WINDOW_WIDTH, WINDOW_HEIGHT);
+    int x = 0;
+    int dx = GRID_WIDTH / 5;
+    int dy = GRID_HEIGHT / 5;
+    int y = GRID_HEIGHT - dy;
+    // First, initialize the number of UI elements
+    for (int i = EMPTY; i != LAST; ++i)
+    {
+        CellType cell_type = static_cast<CellType>(i);
+        // Forgive me, oh heavenly kernel above for this triple nested loop
+        for (int j = 0; j < dy; ++j)
+        {
+            for (int k = 0; k < dx; ++k)
+            {
+                glm::ivec2 idx = glm::ivec2(x + k, j + y);
+                Cell cell = ui_grid.get_cell(idx);
+                cell.cell_type = cell_type;
+                cell.set_color();
+                ui_grid.set_cell(idx, cell);
+            }
+        }
+
+        if (i % 5 == 0 && i != EMPTY)
+        {
+            x = 0;
+            y -= dy;
+        }
+        else 
+        {
+            x += dx;
+        }
+    }
+    
 
     while (!glfwWindowShouldClose(window))
     {
@@ -49,7 +85,7 @@ int main(__unused int argc, __unused char* argv[])
         }
         else
         {
-            ui_grid.update(delta_time);
+            ui_grid.ui_update();
             ui_quad.render();
         }
 
@@ -59,7 +95,7 @@ int main(__unused int argc, __unused char* argv[])
         /* Poll for and process events */
         glfwPollEvents();
         toggle_cell(&grid);
-        check_mouse_down(window, &grid, 600, 600);
+        check_mouse_down(window, &grid, GRID_HEIGHT);
     }
 
     glfwDestroyWindow(window);

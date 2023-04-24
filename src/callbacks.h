@@ -44,7 +44,7 @@ void glfw_mouse_callback(GLFWwindow* window, int button, int action, int mod);
  * This function is used to check the position of the mouse cursor during a drag
  * action.
  */
-void check_mouse_down(GLFWwindow* window, Grid *grid, size_t width, size_t height);
+void check_mouse_down(GLFWwindow* window, Grid *grid, int grid_height);
 
 /*
  * Callback function for keyboard input.

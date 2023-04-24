@@ -82,5 +82,8 @@ public:
 
     /** Simulate the grid for one tick. */
     void update(double delta_time);
+
+    /** Simulate the grid for the UI. */
+    void ui_update();
 };
 #endif

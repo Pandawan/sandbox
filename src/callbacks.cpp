@@ -15,20 +15,21 @@ bool left_click_down = false;
 bool toggle_ui = false;
 double prev_xpos = 0;
 double prev_ypos = 0;
+int window_width;
+int window_height;
 std::vector<Region> ui_region;
 CellType cell_type;
 
-void ui_partition(int grid_width, int grid_height)
+void ui_partition(int window_width, int window_height)
 {
     int width = 0;
     int height = 0;
-    int width_offset = grid_width / 5;
-    int height_offset = grid_height / 5;
+    int width_offset = window_width / 5;
+    int height_offset = window_height / 5;
     // First, initialize the number of UI elements
     for (int i = EMPTY; i != LAST; i++)
     {
         CellType cell_type = static_cast<CellType>(i);
-        // std::cout << cell_type << std::endl;
         Region cell_region = Region {
             width, 
             height, 
@@ -108,14 +109,15 @@ void toggle_cell_type(GLFWwindow* window)
     }
 }
 
-void check_mouse_down(GLFWwindow* window, Grid* grid, size_t width, size_t height)
+void check_mouse_down(GLFWwindow* window, Grid* grid, int grid_height)
 {
     if (left_click_down && !display_ui())
     {
         glfwGetCursorPos(window, &prev_xpos, &prev_ypos);
+        glfwGetWindowSize(window, &window_width, &window_height);
         int x, y;
-        x = prev_xpos / width * 100;
-        y = 100 - prev_ypos / height * 100;
+        x = prev_xpos / window_width * 100;
+        y = grid_height - prev_ypos / window_height * 100;
         glm::ivec2 idx = glm::vec2(x, y);
         Cell cell = grid->get_cell(idx);
 
