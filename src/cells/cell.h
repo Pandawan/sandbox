@@ -16,7 +16,7 @@ enum CellType
     SAND,
     WATER,
     WOOD,
-    UI,
+    UI, // TODO: WHY? HUH? Just call it something normal
     LAST
 };
 
@@ -35,7 +35,7 @@ class Cell
         Cell();
         ~Cell();
         glm::dvec2 velocity;
-        glm::dvec4 RGBA;
+        glm::dvec4 RGBA; // TODO: Rename this to `color`
         CellType cell_type;
         StateOfMatter cell_state;
 

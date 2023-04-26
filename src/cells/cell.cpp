@@ -11,7 +11,7 @@ Cell::~Cell()
 
 }
 
-void Cell::set_color()
+void Cell::set_color() // TODO: WTF IS THIS?
 {
     switch(cell_type)
     {

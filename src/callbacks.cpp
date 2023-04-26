@@ -6,20 +6,23 @@
 #include <vector>
 
 // Tech Debt: The state tracking should be done in a class for neatness sake
+// TODO: Yeah this could all use some refactoring
 
 /*
  * We have these variables to keep track of the state of our mouse
  * since GLFW does not explicitly support holding down a mouse button.
  */
 bool left_click_down = false;
-bool toggle_ui = false;
+bool toggle_ui = false; // TODO: Rename this, not descriptive enough
 double prev_xpos = 0;
 double prev_ypos = 0;
 int window_width;
 int window_height;
-std::vector<Region> ui_region;
-CellType cell_type;
+std::vector<Region> ui_region; // TODO: Bruh
+CellType cell_type; // TODO: CAN WE USE DESCRIPTIVE VAR NAMES??
+bool clear_grid = false; // TODO: I hate this
 
+// TODO: You could have put this in a separate file at least
 void ui_partition(int window_width, int window_height)
 {
     int width = 0;
@@ -121,11 +124,22 @@ void check_mouse_down(GLFWwindow* window, Grid* grid, int grid_height)
         glm::ivec2 idx = glm::vec2(x, y);
         Cell cell = grid->get_cell(idx);
 
-        if (cell.cell_type == EMPTY) {
-            cell.cell_type = cell_type;
-            cell.set_color();
-            grid->set_cell(idx, cell);
-        }   
+        cell.cell_type = cell_type;
+        cell.set_color();
+        grid->set_cell(idx, cell);
+    }
+}
+
+// TODO: We really need to refactor this whole thing lol
+void check_clear_pressed(Grid* grid) {
+    if (clear_grid) {
+        // Ignore clear actions when focused on the UI
+        if (display_ui()) {
+            clear_grid = false;
+        }
+        else {
+            grid->clear();
+        }
     }
 }
 
@@ -154,6 +168,14 @@ void key_callback(__unused GLFWwindow* window, int key, __unused int scancode, i
     else if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
     {
         toggle_ui = !toggle_ui;
+    }
+    else if (key == GLFW_KEY_R) {
+        if (action == GLFW_PRESS) {
+            clear_grid = true;
+        }
+        else if (action == GLFW_RELEASE) {
+            clear_grid = false;
+        }
     }
 }
 

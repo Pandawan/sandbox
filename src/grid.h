@@ -78,6 +78,9 @@ public:
 
     Cell& get_cell(glm::ivec2 position);
 
+    /* Clear the entire grid with the given cell */
+    void clear();
+
     GLuint get_texture();
 
     /** Simulate the grid for one tick. */

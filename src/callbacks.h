@@ -46,6 +46,11 @@ void glfw_mouse_callback(GLFWwindow* window, int button, int action, int mod);
  */
 void check_mouse_down(GLFWwindow* window, Grid *grid, int grid_height);
 
+/**
+ * Check if the grid needs to be cleared, and performs if it so.
+ */
+void check_clear_pressed(Grid *grid);
+
 /*
  * Callback function for keyboard input.
  */

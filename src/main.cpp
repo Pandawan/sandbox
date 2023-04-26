@@ -37,6 +37,7 @@ int main(__unused int argc, __unused char* argv[])
     int dx = GRID_WIDTH / 5;
     int dy = GRID_HEIGHT / 5;
     int y = GRID_HEIGHT - dy;
+    // TODO: WHY IS THAT HERE LOL
     // First, initialize the number of UI elements
     for (int i = EMPTY; i != LAST; ++i)
     {
@@ -96,6 +97,7 @@ int main(__unused int argc, __unused char* argv[])
         glfwPollEvents();
         toggle_cell(&grid);
         check_mouse_down(window, &grid, GRID_HEIGHT);
+        check_clear_pressed(&grid);
     }
 
     glfwDestroyWindow(window);

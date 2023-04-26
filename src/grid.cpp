@@ -30,6 +30,7 @@ Grid::Grid(std::size_t width, std::size_t height) {
 
     // Initialize cell grid
     this->grid = new Cell[height * width];
+    // TODO: Initialize with EMPTY cells
 
     // Initialize texture
     init_texture(&this->texture);
@@ -45,6 +46,14 @@ void Grid::set_cell(glm::ivec2 position, Cell value) {
 
 Cell& Grid::get_cell(glm::ivec2 position) {
     return grid[(position.y * width) + position.x];
+}
+
+void Grid::clear() {
+    for (std::size_t y = 0; y < this->height; ++y) {
+        for (std::size_t x = 0; x < this->width; ++x) {
+            grid[(y * width) + x] = Cell();
+        }
+    }
 }
 
 GLuint Grid::get_texture() {
@@ -71,6 +80,8 @@ void Grid::generate_texture() {
     delete[] data;
 }
 
+// TODO: I would have thought this would be a separate component that makes use
+// of the grid so that the grid can be used for the UI without special-casing
 void Grid::update_grid()
 {
     for (std::size_t y = 0; y < this->height; ++y) {
@@ -215,10 +226,13 @@ bool Grid::flow_down(Cell cell, const size_t &cur_x, const size_t &cur_y) {
 
 void Grid::update(__unused double delta_time) {
     // We update the position of the Cells
-    update_grid();
+    update_grid(); // TODO: Make this take delta_time into account
     generate_texture();
 }
 
+// TODO: If we actually used delta_time then we could just have a special case 
+// of delta_time == 0 -> don't update_grid and then we don't need a special 
+// function anymore
 void Grid::ui_update()
 {
     generate_texture();
