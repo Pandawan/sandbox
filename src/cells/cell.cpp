@@ -3,7 +3,16 @@
 Cell::Cell()
 {
     cell_type = EMPTY;
+    cell_state = none;
     velocity = glm::dvec2(0, 0);
+}
+
+Cell::Cell(const Cell &obj)
+{
+    this->velocity = obj.velocity;
+    this->color = obj.color; 
+    this->cell_type = obj.cell_type;
+    this->cell_state = obj.cell_state;
 }
 
 Cell::~Cell()
@@ -40,8 +49,8 @@ void Cell::set_color() // TODO: WTF IS THIS?
 }
 
 void Cell::set_rgba(const float &r, const float &g, const float &b, const float &a) {
-    RGBA.r = r / 256;
-    RGBA.g = g / 256;
-    RGBA.b = b / 256;
-    RGBA.a = a / 256; 
+    color.r = r / 256;
+    color.g = g / 256;
+    color.b = b / 256;
+    color.a = a / 256; 
 }

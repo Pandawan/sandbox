@@ -26,43 +26,43 @@ private:
     void update_grid();
 
     /** Move Cell from current location to new location */
-    bool move(Cell cell, const size_t &cell_x, const size_t &cell_y, const size_t &new_x, const size_t &new_y);
+    bool move(const size_t &cell_x, const size_t &cell_y, const size_t &new_x, const size_t &new_y);
 
     /** Move Cell from current location to left */
-    bool move_left(Cell cell_type, const size_t &x, const size_t &y);
+    bool move_left(const size_t &x, const size_t &y);
 
     /** Move Cell from current location to right */
-    bool move_right(Cell cell_type, const size_t &x, const size_t &y);
+    bool move_right(const size_t &x, const size_t &y);
 
     /** Move Cell from current location to below */
-    bool move_down(Cell cell_type, const size_t &x, const size_t &y);
+    bool move_down(const size_t &x, const size_t &y);
 
     /** Move Cell from current location to above */
-    bool move_up(Cell cell_type, const size_t &x, const size_t &y);
+    bool move_up(const size_t &x, const size_t &y);
 
     /** Move Cell from current location to diagonally down left */
-    bool move_down_left(Cell cell, const size_t &x, const size_t &y);
+    bool move_down_left(const size_t &x, const size_t &y);
 
     /** Move Cell from current location to diagonally down right */
-    bool move_down_right(Cell cell, const size_t &x, const size_t &y);
+    bool move_down_right(const size_t &x, const size_t &y);
 
     /** Move Cell from current location to diagonally up left */
-    bool move_up_left(Cell cell, const size_t &x, const size_t &y);
+    bool move_up_left(const size_t &x, const size_t &y);
 
     /** Move Cell from current location to diagonally up right */
-    bool move_up_right(Cell cell, const size_t &x, const size_t &y);
+    bool move_up_right(const size_t &x, const size_t &y);
 
     /** Logic for solid movement */
-    bool move_logic_solid(Cell cell, const size_t &cur_x, const size_t &cur_y);
+    bool move_logic_solid(const size_t &cur_x, const size_t &cur_y);
 
     /** Logic for liquid movement */
-    bool move_logic_liquid(Cell cell, const size_t &cur_x, const size_t &cur_y);
+    bool move_logic_liquid(const size_t &cur_x, const size_t &cur_y);
 
     /** liquid movement to empty cell */
-    bool flow_down(Cell cell, const size_t &cur_x, const size_t &cur_y);
+    bool flow_down(const size_t &cur_x, const size_t &cur_y);
 
     /** Swapping two cells */
-    bool swap_cell(Cell cell,const size_t &old_x, const size_t &old_y, const size_t &new_x, const size_t &new_y);
+    bool swap_cell(const size_t &old_x, const size_t &old_y, const size_t &new_x, const size_t &new_y);
 
 public:
     /** OpenGL id to the generated grid texture. */

@@ -33,9 +33,10 @@ class Cell
 {
     public:
         Cell();
+        Cell(const Cell &obj);
         ~Cell();
         glm::dvec2 velocity;
-        glm::dvec4 RGBA; // TODO: Rename this to `color`
+        glm::dvec4 color;
         CellType cell_type;
         StateOfMatter cell_state;
 
