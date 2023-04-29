@@ -7,6 +7,7 @@
 #include "gl.h"
 #include "cells/cell.h"
 
+
 /**
  * The Grid. A ditigal frontier.
  * One small step for sand, one giant leap for sand-kind
@@ -23,7 +24,7 @@ private:
     void generate_texture();
 
     /** Updates each Cell element within the grid. */
-    void update_grid();
+    void update_grid(__unused double delta_time);
 
     /** Move Cell from current location to new location */
     bool move(const size_t &cell_x, const size_t &cell_y, const size_t &new_x, const size_t &new_y);
@@ -53,13 +54,13 @@ private:
     bool move_up_right(const size_t &x, const size_t &y);
 
     /** Logic for solid movement */
-    bool move_logic_solid(const size_t &cur_x, const size_t &cur_y);
+    bool move_logic_solid(const size_t &cur_x, const size_t &cur_y, const double &delta_time);
 
     /** Logic for liquid movement */
-    bool move_logic_liquid(const size_t &cur_x, const size_t &cur_y);
+    bool move_logic_liquid(const size_t &cur_x, const size_t &cur_y, const double &delta_time);
 
     /** liquid movement to empty cell */
-    bool flow_down(const size_t &cur_x, const size_t &cur_y);
+    bool flow_down(const size_t &cur_x, const size_t &cur_y, const double &delta_time);
 
     /** Swapping two cells */
     bool swap_cell(const size_t &old_x, const size_t &old_y, const size_t &new_x, const size_t &new_y);

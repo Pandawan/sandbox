@@ -29,6 +29,8 @@ enum StateOfMatter
     none
 };
 
+const double GRAVITY = 9.8f;
+
 class Cell
 {
     public:
@@ -39,6 +41,7 @@ class Cell
         glm::dvec4 color;
         CellType cell_type;
         StateOfMatter cell_state;
+        float mass;
 
         /* Given this pixel's cell type, we'll set the corresponding RGBA values*/
         void set_color();

@@ -82,24 +82,31 @@ void Grid::generate_texture() {
 
 // TODO: I would have thought this would be a separate component that makes use
 // of the grid so that the grid can be used for the UI without special-casing
-void Grid::update_grid()
+void Grid::update_grid(__unused double delta_time)
 {
-    for (std::size_t y = 0; y < this->height; ++y) {
-        for (std::size_t x = 0; x < this->width; ++x) {
-            glm::ivec2 idx = glm::ivec2(x, y);
-            Cell cell = get_cell(idx);
-            switch (cell.cell_type) {
-                case (SAND):
-                    move_logic_solid(x, y);
-                    break;
-                case (WATER):
-                    move_logic_liquid(x, y);
-                    break;
-                default:
-                    break;
+    double elapsed_time = 0.0;
+    elapsed_time += delta_time;
+    //std::cout << delta_time << std::endl;
+    //std::cout << delta_time << std::endl;
+
+    if (elapsed_time >= (1 / 30)) {
+        for (std::size_t y = 0; y < this->height; ++y) {
+            for (std::size_t x = 0; x < this->width; ++x) {
+                glm::ivec2 idx = glm::ivec2(x, y);
+                Cell cell = get_cell(idx);
+                switch (cell.cell_type) {
+                    case (SAND):
+                        move_logic_solid(x, y, delta_time);
+                        break;
+                    case (WATER):
+                        move_logic_liquid(x, y, delta_time);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
-    }
+    }   
 }
 
 bool Grid::move(const size_t &old_x, const size_t &old_y, const size_t &new_x, const size_t &new_y) {
@@ -177,9 +184,9 @@ bool Grid::swap_cell(const size_t &old_x, const size_t &old_y, const size_t &new
     set_cell(glm::ivec2(old_x, old_y), cell);
 
     if (neighbor.cell_state == liquid)
-        return move_logic_liquid(old_x, old_y);
+        return move_logic_liquid(old_x, old_y, 1/60.0);
     else if (neighbor.cell_state == movable_solid)
-        return move_logic_solid(old_x, old_y);
+        return move_logic_solid(old_x, old_y, 1/60.0);
     else if (neighbor.cell_state == gas)
         //TODO: return move_logic_gas(old_x, old_y);
         return true;
@@ -187,11 +194,19 @@ bool Grid::swap_cell(const size_t &old_x, const size_t &old_y, const size_t &new
         return false;
 }
 
-bool Grid::move_logic_solid(const size_t &cur_x, const size_t &cur_y) {
+bool Grid::move_logic_solid(const size_t &cur_x, const size_t &cur_y, const double &delta_time) {
+    Cell cell = get_cell(glm::ivec2(cur_x, cur_y));
     Cell neighbor_below = get_cell(glm::ivec2(cur_x, cur_y - 1));
+    
+    const size_t ARBITRARY_SPEED_CONSTANT = 10;
+    cell.velocity.y = sqrt(2 * GRAVITY * cur_y);
+    unsigned int amount_down = static_cast<unsigned int>(round(cell.velocity.y * delta_time * ARBITRARY_SPEED_CONSTANT));
 
+    std::cout << amount_down << std::endl;
     if (neighbor_below.cell_type == EMPTY) {
-        return move_down(cur_x, cur_y);
+        for (unsigned int i = 0; i < amount_down; ++i)
+            move_down(cur_x, cur_y);
+        return true;
     } else if (neighbor_below.cell_state == liquid) {
         return swap_cell(cur_x, cur_y, cur_x, cur_y - 1);
     } else if (neighbor_below.cell_state == immovable_solid ||
@@ -202,20 +217,27 @@ bool Grid::move_logic_solid(const size_t &cur_x, const size_t &cur_y) {
     return false;
 }
 
-bool Grid::move_logic_liquid(const size_t &cur_x, const size_t &cur_y) {
+bool Grid::move_logic_liquid(const size_t &cur_x, const size_t &cur_y, const double &delta_time) {
     // Todo: Add liquid interaction with other state neighbor
-    return flow_down(cur_x, cur_y);
+    return flow_down(cur_x, cur_y, delta_time);
 }
 
-bool Grid::flow_down(const size_t &cur_x, const size_t &cur_y) {
+bool Grid::flow_down(const size_t &cur_x, const size_t &cur_y, const double &delta_time) {
+    Cell cell = get_cell(glm::ivec2(cur_x, cur_y));
     Cell neighbor_down = get_cell(glm::ivec2(cur_x, cur_y - 1));
     Cell neighbor_left = get_cell(glm::ivec2(cur_x - 1, cur_y));
     Cell neighbor_right = get_cell(glm::ivec2(cur_x + 1, cur_y));
     Cell neighbor_down_left = get_cell(glm::ivec2(cur_x - 1, cur_y - 1));
     Cell neighbor_down_right = get_cell(glm::ivec2(cur_x + 1, cur_y - 1));
 
+    const size_t ARBITRARY_SPEED_CONSTANT = 10;
+    cell.velocity.y = sqrt(2 * GRAVITY * cur_y);
+    unsigned int amount_down = static_cast<unsigned int>(round(cell.velocity.y * delta_time * ARBITRARY_SPEED_CONSTANT));
+
     if (neighbor_down.cell_type == EMPTY) {
-        return move_down(cur_x, cur_y);
+        for (unsigned int i = 0; i < amount_down; ++i)
+            move_down(cur_x, cur_y);
+        return true;
     } else if (neighbor_down_left.cell_type == EMPTY && neighbor_down_right.cell_type != EMPTY) {
         return move_down_left(cur_x, cur_y);
     } else if (neighbor_down_left.cell_type != EMPTY && neighbor_down_right.cell_type == EMPTY) {
@@ -236,7 +258,7 @@ bool Grid::flow_down(const size_t &cur_x, const size_t &cur_y) {
 
 void Grid::update(__unused double delta_time) {
     // We update the position of the Cells
-    update_grid(); // TODO: Make this take delta_time into account
+    update_grid(delta_time); // TODO: Make this take delta_time into account
     generate_texture();
 }
 
