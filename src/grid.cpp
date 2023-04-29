@@ -198,14 +198,25 @@ bool Grid::move_logic_solid(const size_t &cur_x, const size_t &cur_y, const doub
     Cell cell = get_cell(glm::ivec2(cur_x, cur_y));
     Cell neighbor_below = get_cell(glm::ivec2(cur_x, cur_y - 1));
     
-    const size_t ARBITRARY_SPEED_CONSTANT = 10;
-    cell.velocity.y = sqrt(2 * GRAVITY * cur_y);
-    unsigned int amount_down = static_cast<unsigned int>(round(cell.velocity.y * delta_time * ARBITRARY_SPEED_CONSTANT));
+    //cell.velocity.y += sqrt(2 * GRAVITY * cur_y * this->height);
+    //unsigned int amount_down = static_cast<unsigned int>(round(cell.velocity.y * delta_time));
 
-    std::cout << amount_down << std::endl;
+    
+    //unsigned int delta_position = static_cast<unsigned int>(round(cell.velocity.y * delta_time + 0.5 * cell.acceleration.y * delta_time * delta_time));
+    
+    const double OFFSET = 0.47;
+    cell.acceleration.y = GRAVITY * cell.mass;
+    double delta_position = round(cell.velocity.y * delta_time + 0.5 * cell.acceleration.y * delta_time * delta_time + OFFSET);
+    
+    cell.velocity.y  += cell.acceleration.y * delta_time;
+
+    //std::cout << "Sand Veloctiy: " << cell.velocity.y << std::endl;
+    //std::cout << "Sand delta_s: "<< delta_position << std::endl;
     if (neighbor_below.cell_type == EMPTY) {
-        for (unsigned int i = 0; i < amount_down; ++i)
+        for (unsigned int i = 0; i < delta_position; ++i)
+        if (neighbor_below.cell_type == EMPTY){
             move_down(cur_x, cur_y);
+        }
         return true;
     } else if (neighbor_below.cell_state == liquid) {
         return swap_cell(cur_x, cur_y, cur_x, cur_y - 1);
@@ -230,12 +241,17 @@ bool Grid::flow_down(const size_t &cur_x, const size_t &cur_y, const double &del
     Cell neighbor_down_left = get_cell(glm::ivec2(cur_x - 1, cur_y - 1));
     Cell neighbor_down_right = get_cell(glm::ivec2(cur_x + 1, cur_y - 1));
 
-    const size_t ARBITRARY_SPEED_CONSTANT = 10;
-    cell.velocity.y = sqrt(2 * GRAVITY * cur_y);
-    unsigned int amount_down = static_cast<unsigned int>(round(cell.velocity.y * delta_time * ARBITRARY_SPEED_CONSTANT));
+    cell.acceleration.y = GRAVITY * cell.mass;
+    const double OFFSET = 0.47;
+    double delta_position = round(cell.velocity.y * delta_time + 0.5 * cell.acceleration.y * delta_time * delta_time + OFFSET);
+    
+    cell.velocity.y  += cell.acceleration.y * delta_time;
+    //std::cout << "Water Veloctiy: " << cell.velocity.y << std::endl;
+    //std::cout << "Water delta_s: "<< delta_position << std::endl;
+    
 
     if (neighbor_down.cell_type == EMPTY) {
-        for (unsigned int i = 0; i < amount_down; ++i)
+        for (unsigned int i = 0; i < delta_position; ++i)
             move_down(cur_x, cur_y);
         return true;
     } else if (neighbor_down_left.cell_type == EMPTY && neighbor_down_right.cell_type != EMPTY) {

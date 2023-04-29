@@ -34,11 +34,12 @@ void Cell::set_color() // TODO: WTF IS THIS?
         case (SAND):
             set_rgba(194, 178, 128, 0.5);
             cell_state = movable_solid;
-            mass = 1.6;
+            mass = 1520;
             break;
         case (WATER):
             set_rgba(116,204, 244, 0);
             cell_state = liquid;
+            mass = 1000;
 
             break;
         case (WOOD):

@@ -37,6 +37,7 @@ class Cell
         Cell();
         Cell(const Cell &obj);
         ~Cell();
+        glm::dvec2 acceleration;
         glm::dvec2 velocity;
         glm::dvec4 color;
         CellType cell_type;
