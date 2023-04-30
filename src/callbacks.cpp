@@ -19,7 +19,7 @@ double prev_ypos = 0;
 int window_width;
 int window_height;
 std::vector<Region> ui_region; // TODO: Bruh
-CellType cell_type; // TODO: CAN WE USE DESCRIPTIVE VAR NAMES??
+Cell selected_cell;
 bool clear_grid = false; // TODO: I hate this
 
 // TODO: You could have put this in a separate file at least
@@ -29,10 +29,11 @@ void ui_partition(int window_width, int window_height)
     int height = 0;
     int width_offset = window_width / 5;
     int height_offset = window_height / 5;
+    Cell cell_types[] = { Cell::Empty(), Cell::Sand(), Cell::Water(), Cell::Stone(), Cell::Wood() };
     // First, initialize the number of UI elements
-    for (int i = EMPTY; i != LAST; i++)
+    for (int i = 0; i != 5; i++)
     {
-        CellType cell_type = static_cast<CellType>(i);
+        Cell cell_type = cell_types[i];
         Region cell_region = Region {
             width, 
             height, 
@@ -40,7 +41,7 @@ void ui_partition(int window_width, int window_height)
             height + height_offset, 
             cell_type
         };
-        if (i % 5 == 0 && i != EMPTY)
+        if (i % 5 == 0 && i != 0)
         {
             width = 0;
             height += height_offset;
@@ -76,7 +77,9 @@ void glfw_mouse_callback(GLFWwindow* window,
     
     if (button == GLFW_MOUSE_BUTTON_LEFT)
     {
-        toggle_cell_type(window);
+        if (display_ui()) {
+            toggle_cell_type(window);
+        }
         if (action == GLFW_RELEASE)
             left_click_down = false;
         else if (action == GLFW_PRESS)
@@ -106,7 +109,7 @@ void toggle_cell_type(GLFWwindow* window)
 
         if (within_bounds((int)xpos, (int)ypos, region.x, region.y, region.dx, region.dy))
         {
-            cell_type = region.cell_type;
+            selected_cell = region.cell_kind;
             // std::cout << "in bounds for " << region.cell_type << std::endl;
         }
     }
@@ -118,15 +121,21 @@ void check_mouse_down(GLFWwindow* window, Grid* grid, int grid_height)
     {
         glfwGetCursorPos(window, &prev_xpos, &prev_ypos);
         glfwGetWindowSize(window, &window_width, &window_height);
+
+        // Don't place tiles outside of bounds
+        if (
+            prev_xpos < 0 || prev_xpos >= window_width ||
+            prev_ypos < 0 || prev_ypos >= window_height
+        ) {
+            return;
+        }
+
         int x, y;
         x = prev_xpos / window_width * 100;
         y = grid_height - prev_ypos / window_height * 100;
-        glm::ivec2 idx = glm::vec2(x, y);
-        Cell cell = grid->get_cell(idx);
+        glm::uvec2 idx = glm::uvec2(x, y);
 
-        cell.cell_type = cell_type;
-        cell.set_color();
-        grid->set_cell(idx, cell);
+        grid->set_cell(idx, selected_cell);
     }
 }
 
@@ -147,23 +156,23 @@ void key_callback(__unused GLFWwindow* window, int key, __unused int scancode, i
 {
     if (key == GLFW_KEY_0 && action == GLFW_PRESS)
     {
-        cell_type = EMPTY;
+        selected_cell = Cell::Empty();
     }
     else if (key == GLFW_KEY_1 && action == GLFW_PRESS)
     {
-        cell_type = SAND;
+        selected_cell = Cell::Sand();
     }
     else if (key == GLFW_KEY_2 && action == GLFW_PRESS)
     {
-        cell_type = WATER;
+        selected_cell = Cell::Water();
     }
     else if (key == GLFW_KEY_3 && action == GLFW_PRESS)
     {
-        cell_type = WOOD;
+        selected_cell = Cell::Wood();
     }
     else if (key == GLFW_KEY_Q && action == GLFW_PRESS)
     {
-        cell_type = UI;
+        selected_cell = Cell::Stone();
     }
     else if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
     {
@@ -182,9 +191,4 @@ void key_callback(__unused GLFWwindow* window, int key, __unused int scancode, i
 bool display_ui()
 {
     return toggle_ui;
-}
-
-void toggle_cell(Grid* grid)
-{
-    grid->toggled_cell = cell_type;
 }

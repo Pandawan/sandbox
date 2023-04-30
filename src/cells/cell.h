@@ -1,54 +1,57 @@
 /**
- * This is the base class that all other subclasses will inherit from. 
+ * This is the base class that all other subclasses will inherit from.
  */
 #ifndef CELL_H
 #define CELL_H
 
-#include <vector>
-#include <iostream>
 #include <glm/vec2.hpp>
-#include <glm/vec4.hpp>
+#include <glm/vec3.hpp>
+#include <string>
+#include <vector>
+#include <map>
 
-enum CellType 
+enum CellBehavior
 {
-    // KEEP EMPTY AT THE TOP
-    EMPTY = 0,
-    SAND,
-    WATER,
-    WOOD,
-    UI, // TODO: WHY? HUH? Just call it something normal
-    LAST
-};
-
-enum StateOfMatter 
-{
-    liquid,
-    movable_solid,
-    immovable_solid,
-    gas, 
-    none
+    NONE = 0,
+    LIQUID,
+    MOVABLE_SOLID,
+    IMMOVABLE_SOLID,
+    GAS
 };
 
 const double GRAVITY = 9.8f;
 
 class Cell
 {
-    public:
-        Cell();
-        Cell(const Cell &obj);
-        ~Cell();
-        glm::dvec2 acceleration;
-        glm::dvec2 velocity;
-        glm::dvec4 color;
-        CellType cell_type;
-        StateOfMatter cell_state;
-        float mass;
+public:
+    /** Create an empty cell. */
+    Cell();
+    /** Create a cell with given properties. */
+    Cell(std::string name, glm::u8vec3 color, CellBehavior behavior, double mass);
+    /** Copy a cell from another. */
+    Cell(const Cell& obj);
+    ~Cell();
 
-        /* Given this pixel's cell type, we'll set the corresponding RGBA values*/
-        void set_color();
+    // Cell Properties
+    /** Name of the cell type. */
+    std::string name;
+    /** Color of the cell. */
+    glm::u8vec3 color;
+    /** Type of behavior to expect from this cell. */
+    CellBehavior behavior; // TODO: Do we even need this?
+    /** Mass of the cell for physics behavior. */
+    double mass;
 
-        /* Given color in r, g, b, set them according to glm RGBA*/
-        void set_rgba(const float &r, const float &g, const float &b, const float &a);
+    // Runtime State
+    glm::dvec2 acceleration;
+    glm::dvec2 velocity;
+
+    // Presets
+    static Cell Empty();
+    static Cell Sand();
+    static Cell Water();
+    static Cell Stone();
+    static Cell Wood();
 };
 
 #endif

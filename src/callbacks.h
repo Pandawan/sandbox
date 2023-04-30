@@ -4,6 +4,7 @@
 #include "gl.h"
 #include "grid.h"
 #include "render/quad.h"
+#include "cells/cell.h"
 
 struct Region
 {
@@ -11,7 +12,7 @@ struct Region
     int y;
     int dx;
     int dy;
-    CellType cell_type;
+    Cell cell_kind;
 };
 
 /*
@@ -55,12 +56,6 @@ void check_clear_pressed(Grid *grid);
  * Callback function for keyboard input.
  */
 void key_callback(GLFWwindow* window, int key, __unused int scancode, __unused int action, __unused int mods);
-
-
-/**
- * Tethers the type of Cell to Grid.
- */
-void toggle_cell(Grid* grid);
 
 /**
  * Triggers the UI display 

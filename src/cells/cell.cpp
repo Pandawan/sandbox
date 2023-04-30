@@ -1,63 +1,78 @@
 #include "cell.h"
 
 Cell::Cell()
+    : name("void"),
+      color(0),
+      behavior(CellBehavior::NONE),
+      mass(0),
+      acceleration(0),
+      velocity(0)
 {
-    cell_type = EMPTY;
-    cell_state = none;
-    mass = 0;
-    velocity = glm::dvec2(0, 0);
 }
 
-Cell::Cell(const Cell &obj)
+Cell::Cell(
+    std::string name,
+    glm::u8vec3 color,
+    CellBehavior behavior,
+    double mass
+) : name(name),
+    color(color),
+    behavior(behavior),
+    mass(mass),
+    acceleration(0),
+    velocity(0)
 {
-    this->mass = obj.mass;
-    this->velocity = obj.velocity;
-    this->color = obj.color; 
-    this->cell_type = obj.cell_type;
-    this->cell_state = obj.cell_state;
+}
+
+Cell::Cell(const Cell& obj) 
+    : color(obj.color),
+      behavior(obj.behavior),
+      mass(obj.mass),
+      acceleration(obj.acceleration),
+      velocity(obj.velocity)
+{
 }
 
 Cell::~Cell()
 {
-
 }
 
-void Cell::set_color() // TODO: WTF IS THIS?
-{
-    switch(cell_type)
-    {
-        case (EMPTY):
-            set_rgba(0, 0, 0, 0);
-            cell_state = none;
-            mass = 0;
-            break;
-        case (SAND):
-            set_rgba(194, 178, 128, 0.5);
-            cell_state = movable_solid;
-            mass = 1520;
-            break;
-        case (WATER):
-            set_rgba(116,204, 244, 0);
-            cell_state = liquid;
-            mass = 1000;
-
-            break;
-        case (WOOD):
-            set_rgba(101, 56, 24, 0);
-            cell_state = immovable_solid;
-            mass = 0.7;
-            break;
-        case (UI):
-            set_rgba(85.33, 85.33, 85.33, 0);
-            break;
-        default:
-            break;
-    }
+Cell Cell::Empty() {
+    return Cell();
 }
 
-void Cell::set_rgba(const float &r, const float &g, const float &b, const float &a) {
-    color.r = r / 256;
-    color.g = g / 256;
-    color.b = b / 256;
-    color.a = a / 256; 
+Cell Cell::Sand() {
+    std::string name = "sand";
+    glm::u8vec3 color(194, 178, 128);
+    CellBehavior behavior = CellBehavior::MOVABLE_SOLID;
+    double mass = 1520;
+
+    return Cell(name, color, behavior, mass);
+}
+
+Cell Cell::Water() {
+    std::string name = "water";
+    glm::u8vec3 color(116, 204, 244);
+    CellBehavior behavior = CellBehavior::LIQUID;
+    double mass = 1000;
+
+    return Cell(name, color, behavior, mass);
+}
+
+Cell Cell::Stone() {
+    std::string name = "stone";
+    glm::u8vec3 color(85, 85, 85);
+    CellBehavior behavior = CellBehavior::IMMOVABLE_SOLID;
+    double mass = 0;
+
+    return Cell(name, color, behavior, mass);
+}
+
+Cell Cell::Wood() {
+    std::string name = "wood";
+    glm::u8vec3 color(101, 56, 24);
+    CellBehavior behavior = CellBehavior::IMMOVABLE_SOLID;
+    double mass = 0;
+
+    return Cell(name, color, behavior, mass);
 }
