@@ -9,7 +9,8 @@ project(
 #-------------------------------------------------------------------------------
 # Build options
 #-------------------------------------------------------------------------------
-option(BUILD_DEBUG     "Build with debug settings"    ON)
+option(BUILD_DEBUG   "Build with debug settings"        ON)
+option(USE_ASAN      "Build with address sanitization"  ON)
 
 if (BUILD_DEBUG)
   set(CMAKE_BUILD_TYPE Debug)
@@ -29,6 +30,16 @@ if(MSVC)
   target_compile_options(${PROJECT_NAME} PUBLIC /W4 /WX)
 else()
   target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -Wpedantic -Werror)
+endif()
+
+if(BUILD_DEBUG AND USE_ASAN)
+  if(MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE /fsanitize=undefined,address)
+    target_link_options(${PROJECT_NAME} PRIVATE /fsanitize=undefined,address)
+  else()
+    target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=undefined,address)
+    target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=undefined,address)
+  endif()
 endif()
 
 #-------------------------------------------------------------------------------
