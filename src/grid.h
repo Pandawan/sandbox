@@ -35,23 +35,14 @@ private:
     */
     bool simulate_solid(glm::uvec2 position, double delta_time);
 
-    // /** 
-    //  * Simulate a liquid cell at the given position.
-    //  * @returns True if the cell did update/move.
-    //  */
+    /** 
+     * Simulate a liquid cell at the given position.
+     * @returns True if the cell did update/move.
+     */
     bool simulate_liquid(glm::uvec2 position, double delta_time);
 
     /** Swap two cells in the grid. */
     void swap_cells(glm::uvec2 first, glm::uvec2 second);
-
-    
-    /** Move Cell from current location to new location */
-    bool move(const size_t &cell_x, const size_t &cell_y, const size_t &new_x, const size_t &new_y);
-
-
-    /** liquid movement to empty cell */
-    bool flow_down(const size_t &cur_x, const size_t &cur_y, const double &delta_time);
-
 
 public:
     /** OpenGL id to the generated grid texture. */

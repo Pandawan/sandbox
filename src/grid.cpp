@@ -179,7 +179,7 @@ bool Grid::simulate_solid(glm::uvec2 position, __unused double delta_time) {
         glm::uvec2 pos_down_left = position + dir::down + dir::left;
         Cell* cell_down_left = get_cell(pos_down_left);
         // TODO: Should this allow sand dropping into liquid from the side? If so, should probably add an abstraction like "try_move" or something?
-        if (cell_down_left != nullptr && cell_down_left->behavior == CellBehavior::NONE) {
+        if (cell_down_left != nullptr && cell_down_left->is_empty()) {
             swap_cells(position, pos_down_left);
             return true;
         }
@@ -187,7 +187,7 @@ bool Grid::simulate_solid(glm::uvec2 position, __unused double delta_time) {
             // Try with down right
             glm::uvec2 pos_down_right = position + dir::down + dir::right;
             Cell* cell_down_right = get_cell(pos_down_right);
-            if (cell_down_right != nullptr && cell_down_right->behavior == CellBehavior::NONE) {
+            if (cell_down_right != nullptr && cell_down_right->is_empty()) {
                 swap_cells(position, pos_down_right);
                 return true;
             }
@@ -209,13 +209,13 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
     // TODO: Refactor this, this isn't clean code
 
     // Down
-    if (neighbor_down != nullptr && neighbor_down->behavior == CellBehavior::NONE) {
+    if (neighbor_down != nullptr && neighbor_down->is_empty()) {
         swap_cells(position, position + dir::down);
         return true;
     }
     // Down left only
     else if (
-        neighbor_down_left != nullptr && neighbor_down_left->behavior == CellBehavior::NONE 
+        neighbor_down_left != nullptr && neighbor_down_left->is_empty() 
         && (neighbor_down_right == nullptr || neighbor_down_right->behavior != CellBehavior::NONE)
     ) {
         swap_cells(position, position + dir::down + dir::left);
@@ -224,15 +224,15 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
     // Down right only
     else if (
         (neighbor_down_left == nullptr || neighbor_down_left->behavior != CellBehavior::NONE)
-        && neighbor_down_right != nullptr && neighbor_down_right->behavior == CellBehavior::NONE
+        && neighbor_down_right != nullptr && neighbor_down_right->is_empty()
     ) {
         swap_cells(position, position + dir::down + dir::right);
         return true;
     }
     // Down left OR Down right
     else if (
-        (neighbor_down_left != nullptr && neighbor_down_left->behavior == CellBehavior::NONE)
-        && neighbor_down_right != nullptr && neighbor_down_right->behavior == CellBehavior::NONE
+        (neighbor_down_left != nullptr && neighbor_down_left->is_empty())
+        && neighbor_down_right != nullptr && neighbor_down_right->is_empty()
     ) {
         bool go_left = std::rand() % 2 == 0;
         if (go_left) { 
@@ -244,7 +244,7 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
     }
     // Left only
     else if (
-        neighbor_left != nullptr && neighbor_left->behavior == CellBehavior::NONE 
+        neighbor_left != nullptr && neighbor_left->is_empty() 
         && (neighbor_right == nullptr || neighbor_right->behavior != CellBehavior::NONE)
     ) {
         swap_cells(position, position + dir::left);
@@ -253,15 +253,15 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
     // Right only
     else if (
         (neighbor_left == nullptr || neighbor_left->behavior != CellBehavior::NONE)
-        && neighbor_right != nullptr && neighbor_right->behavior == CellBehavior::NONE
+        && neighbor_right != nullptr && neighbor_right->is_empty()
     ) {
         swap_cells(position, position + dir::right);
         return true;
     }
     // Left OR Right
     else if (
-        (neighbor_left != nullptr && neighbor_left->behavior == CellBehavior::NONE)
-        && neighbor_right != nullptr && neighbor_right->behavior == CellBehavior::NONE
+        (neighbor_left != nullptr && neighbor_left->is_empty())
+        && neighbor_right != nullptr && neighbor_right->is_empty()
     ) {
         bool go_left = std::rand() % 2 == 0;
         if (go_left) { 

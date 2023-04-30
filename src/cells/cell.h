@@ -46,6 +46,8 @@ public:
     glm::dvec2 acceleration;
     glm::dvec2 velocity;
 
+    bool is_empty();
+
     // Presets
     static Cell Empty();
     static Cell Sand();

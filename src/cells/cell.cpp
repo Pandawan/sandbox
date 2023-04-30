@@ -37,6 +37,10 @@ Cell::~Cell()
 {
 }
 
+bool Cell::is_empty() {
+    return this->behavior == CellBehavior::NONE;
+}
+
 Cell Cell::Empty() {
     return Cell();
 }
