@@ -239,7 +239,7 @@ bool Grid::simulate_plasma(glm::uvec2 position, double delta_time)
 
     bool success = false;
     // We do a coinflip to randomize adjacent fire spawning.
-    double threshold = 1;
+    double threshold = 0.7;
     double coinflip;
 
     // For plasma cells, we should not be swapping but instead creating a clone.
