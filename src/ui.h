@@ -29,7 +29,10 @@ private:
         Cell::Sand(),
         Cell::Water(),
         Cell::Stone(),
-        Cell::Wood()
+        Cell::Wood(),
+        Cell::Fire(),
+        Cell::Smoke(),
+        Cell::Lava()
     };
     /** Number of columns to render in the UI. */
     std::size_t columns = 5;

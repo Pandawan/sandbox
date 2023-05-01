@@ -113,16 +113,3 @@ Cell Cell::Lava() {
     double mass = 0;
     return Cell(name, color, behavior, mass);
 }
-
-std::vector<Cell> Cell::get_cell_presets() {
-    std::vector<Cell> cell_presets;
-    cell_presets.push_back(Cell::Empty());
-    cell_presets.push_back(Cell::Sand());
-    cell_presets.push_back(Cell::Water());
-    cell_presets.push_back(Cell::Stone());
-    cell_presets.push_back(Cell::Wood());
-    cell_presets.push_back(Cell::Fire());
-    cell_presets.push_back(Cell::Smoke());
-    cell_presets.push_back(Cell::Lava());
-    return cell_presets;
-}
