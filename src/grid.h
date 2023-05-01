@@ -7,7 +7,6 @@
 #include "gl.h"
 #include "cells/cell.h"
 
-
 /**
  * The Grid. A ditigal frontier.
  * One small step for sand, one giant leap for sand-kind
@@ -16,6 +15,9 @@ class Grid {
 
 private:
     Cell* grid;
+
+    /** Whether or not the cell has updated within one call of simulate_grid */
+    bool* cell_dirty;
 
     std::size_t width;
     std::size_t height;
