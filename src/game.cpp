@@ -23,13 +23,18 @@ void Game::update(double delta_time) {
         this->ui.update(delta_time);
     } else {
 
-        // TODO: This feels slightly gross; I feel like the World itself should worry about this stuff
-        // Set cells based on mouse input
-        if (this->mouse_left) {
-            Cell cell_kind = this->ui.get_selected();
-            this->world.get_grid()->set_cell(this->mouse_pos, cell_kind);
-        } else if (this->mouse_right) {
-            this->world.get_grid()->set_cell(this->mouse_pos, Cell::Empty());
+        // TODO: The whole mouse_in_view is gross but I kinda have to because 
+        // 1. cell_positions are unsigned, 2. mouse can have negative values
+        // so need to convert between these.
+        if (this->mouse_in_view) {   
+            // TODO: This feels slightly gross; I feel like the World itself should worry about this stuff
+            // Set cells based on mouse input
+            if (this->mouse_left) {
+                Cell cell_kind = this->ui.get_selected();
+                this->world.get_grid()->set_cell(this->mouse_pos, cell_kind);
+            } else if (this->mouse_right) {
+                this->world.get_grid()->set_cell(this->mouse_pos, Cell::Empty());
+            }
         }
     
         // Update world
@@ -43,14 +48,6 @@ void Game::update_mouse_pos() {
     int window_width, window_height;
     glfwGetWindowSize(this->window, &window_width, &window_height); 
 
-    // Cursor out of window
-    if (
-        mouse_x < 0 || mouse_x >= window_width ||
-        mouse_y < 0 || mouse_x >= window_height
-    ) {
-        return;
-    }
-
     // Calculate grid position
     std::size_t grid_x = static_cast<std::size_t>(
         floor(mouse_x) / (double)window_width * this->width
@@ -60,6 +57,11 @@ void Game::update_mouse_pos() {
     );
 
     this->mouse_pos = glm::uvec2(grid_x, grid_y);
+
+    this->mouse_in_view = (
+        grid_x >= 0 && grid_x < width &&
+        grid_y >= 0 && grid_y < height
+    );
 }
 
 void Game::render() {
