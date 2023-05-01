@@ -10,12 +10,15 @@
 #include <vector>
 #include <map>
 
+#include "../math.h"
+
 enum CellBehavior
 {
     NONE = 0,
     LIQUID,
     MOVABLE_SOLID,
     IMMOVABLE_SOLID,
+    PLASMA,
     GAS
 };
 
@@ -46,6 +49,9 @@ public:
     glm::dvec2 acceleration;
     glm::dvec2 velocity;
 
+    /** Life time of the cell. Useful for things that should perish i.e. fire. */
+    double lifetime;
+
     bool is_empty();
 
     // Presets
@@ -54,6 +60,15 @@ public:
     static Cell Water();
     static Cell Stone();
     static Cell Wood();
+    static Cell Fire();
+    static Cell Smoke();
+    static Cell Lava();
+
+    /** 
+     * Returns a vector containing all the cell presets. 
+     * @returns a vector containing each Cell preset.
+     */
+    static std::vector<Cell> get_cell_presets();
 };
 
 #endif

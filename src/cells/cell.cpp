@@ -6,7 +6,8 @@ Cell::Cell()
       behavior(CellBehavior::NONE),
       mass(0),
       acceleration(0),
-      velocity(0)
+      velocity(0),
+      lifetime(0)
 {
 }
 
@@ -20,7 +21,8 @@ Cell::Cell(
     behavior(behavior),
     mass(mass),
     acceleration(0),
-    velocity(0)
+    velocity(0),
+    lifetime(0)
 {
 }
 
@@ -29,7 +31,8 @@ Cell::Cell(const Cell& obj)
       behavior(obj.behavior),
       mass(obj.mass),
       acceleration(obj.acceleration),
-      velocity(obj.velocity)
+      velocity(obj.velocity),
+      lifetime(obj.lifetime)
 {
 }
 
@@ -79,4 +82,47 @@ Cell Cell::Wood() {
     double mass = 0;
 
     return Cell(name, color, behavior, mass);
+}
+
+Cell Cell::Fire() {
+    std::string name = "fire";
+    glm::u8vec3 color(255, 69, 0);
+    CellBehavior behavior = CellBehavior::PLASMA;
+    double mass = 0; 
+    Cell cell = Cell(name, color, behavior, mass);
+    cell.lifetime = get_random_value(0.1, 0.2);
+
+    return cell;
+}
+
+Cell Cell::Smoke() {
+    std::string name = "smoke";
+    glm::u8vec3 color(122, 122, 122);
+    CellBehavior behavior = CellBehavior::GAS;
+    double mass = 0;
+    Cell cell = Cell(name, color, behavior, mass);
+    cell.lifetime = get_random_value(1, 2);
+
+    return cell;
+}
+
+Cell Cell::Lava() {
+    std::string name = "lava";
+    glm::u8vec3 color(207, 16, 32);
+    CellBehavior behavior = CellBehavior::MOVABLE_SOLID;
+    double mass = 0;
+    return Cell(name, color, behavior, mass);
+}
+
+std::vector<Cell> Cell::get_cell_presets() {
+    std::vector<Cell> cell_presets;
+    cell_presets.push_back(Cell::Empty());
+    cell_presets.push_back(Cell::Sand());
+    cell_presets.push_back(Cell::Water());
+    cell_presets.push_back(Cell::Stone());
+    cell_presets.push_back(Cell::Wood());
+    cell_presets.push_back(Cell::Fire());
+    cell_presets.push_back(Cell::Smoke());
+    cell_presets.push_back(Cell::Lava());
+    return cell_presets;
 }

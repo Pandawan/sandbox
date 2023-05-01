@@ -363,7 +363,7 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
         (neighbor_down_left != nullptr && neighbor_down_left->is_empty())
         && neighbor_down_right != nullptr && neighbor_down_right->is_empty()
     ) {
-        bool go_left = dir::random();
+        bool go_left = coinflip();
         if (go_left) { 
             swap_cells(position, position + dir::down + dir::left);
         } else {
@@ -392,7 +392,7 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
         (neighbor_left != nullptr && neighbor_left->is_empty())
         && neighbor_right != nullptr && neighbor_right->is_empty()
     ) {
-        bool go_left = dir::random();
+        bool go_left = coinflip();
         if (go_left) { 
             swap_cells(position, position + dir::left);
         } else {

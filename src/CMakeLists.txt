@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.14)
 target_sources(${PROJECT_NAME} PRIVATE 
     callbacks.cpp
     main.cpp
+    math.cpp
     grid.cpp
     window.cpp
 )

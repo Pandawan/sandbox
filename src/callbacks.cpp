@@ -29,11 +29,17 @@ void ui_partition(int window_width, int window_height)
     int height = 0;
     int width_offset = window_width / 5;
     int height_offset = window_height / 5;
-    Cell cell_types[] = { Cell::Empty(), Cell::Sand(), Cell::Water(), Cell::Stone(), Cell::Wood() };
+    std::vector<Cell> cell_presets = Cell::get_cell_presets();
+    Cell cell_types[] = { Cell::Empty(), Cell::Sand(), Cell::Water(), Cell::Stone(), Cell::Wood(), Cell::Fire() };
     // First, initialize the number of UI elements
-    for (int i = 0; i != 5; i++)
+    for (size_t i = 0; i < cell_presets.size(); i++)
     {
-        Cell cell_type = cell_types[i];
+        Cell cell_type = cell_presets[i];
+        if (i % 5 == 0 && i != 0)
+        {
+            width = 0;
+            height += height_offset;
+        }
         Region cell_region = Region {
             width, 
             height, 
@@ -41,15 +47,7 @@ void ui_partition(int window_width, int window_height)
             height + height_offset, 
             cell_type
         };
-        if (i % 5 == 0 && i != 0)
-        {
-            width = 0;
-            height += height_offset;
-        }
-        else 
-        {
-            width += width_offset;
-        }
+        width += width_offset;
         ui_region.push_back(cell_region);
         // std::cout << width << " " << width + width_offset << " " << height << " " << height + height_offset << std::endl;
     }
@@ -109,8 +107,7 @@ void toggle_cell_type(GLFWwindow* window)
 
         if (within_bounds((int)xpos, (int)ypos, region.x, region.y, region.dx, region.dy))
         {
-            selected_cell = region.cell_kind;
-            // std::cout << "in bounds for " << region.cell_type << std::endl;
+            selected_cell = region.cell_preset;
         }
     }
 }

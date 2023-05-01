@@ -1,9 +1,9 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <ctime>
 
 #include "gl.h"
-
 #include "callbacks.h"
 #include "window.h"
 #include "grid.h"
@@ -17,6 +17,7 @@ int GRID_HEIGHT = 100;
 
 int main(__unused int argc, __unused char* argv[])
 {
+    srand(time(0));
     init_glfw();
 
     GLFWwindow* window = create_window(WINDOW_WIDTH, WINDOW_HEIGHT, "Sandbox");
@@ -37,12 +38,18 @@ int main(__unused int argc, __unused char* argv[])
     int dx = GRID_WIDTH / 5;
     int dy = GRID_HEIGHT / 5;
     int y = GRID_HEIGHT - dy;
-    Cell cell_types[] = { Cell::Empty(), Cell::Sand(), Cell::Water(), Cell::Stone(), Cell::Wood() };
+    std::vector<Cell> cell_presets = Cell::get_cell_presets();
+    Cell cell_types[] = { Cell::Empty(), Cell::Sand(), Cell::Water(), Cell::Stone(), Cell::Wood(), Cell::Fire() };
     // TODO: WHY IS THAT HERE LOL
     // First, initialize the number of UI elements
-    for (int i = 0; i != 5; ++i)
+    for (size_t i = 0; i < cell_presets.size(); ++i)
     {
-        Cell cell_type = cell_types[i];
+        Cell cell_type = cell_presets[i];
+        if (i % 5 == 0 && i != 0)
+        {
+            x = 0;
+            y -= dy;
+        }
         // Forgive me, oh heavenly kernel above for this triple nested loop
         for (int j = 0; j < dy; ++j)
         {
@@ -52,16 +59,7 @@ int main(__unused int argc, __unused char* argv[])
                 ui_grid.set_cell(idx, cell_type);
             }
         }
-
-        if (i % 5 == 0 && i != 0)
-        {
-            x = 0;
-            y -= dy;
-        }
-        else 
-        {
-            x += dx;
-        }
+        x += dx;
     }
     
     double last_frame = 0;

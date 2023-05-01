@@ -12,8 +12,9 @@ struct Region
     int y;
     int dx;
     int dy;
-    Cell cell_kind;
+    Cell cell_preset;
 };
+
 
 /*
  * We have this class to store the different types of cells dynamically
