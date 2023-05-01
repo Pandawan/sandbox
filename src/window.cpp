@@ -31,7 +31,9 @@ void init_glfw()
     glfwWindowHint(GLFW_ALPHA_BITS, 8);
     glfwWindowHint(GLFW_STENCIL_BITS, 8);
     glfwWindowHint(GLFW_DEPTH_BITS, 24);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+
+    // TODO: Make this resizable again (requires mouse->grid coordinate system work with resizable coordinates)
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 }
 
 GLFWwindow* create_window(int width, int height, const char* title)

@@ -2,19 +2,6 @@
 #define CALLBACKS_H
 
 #include "gl.h"
-#include "grid.h"
-#include "render/quad.h"
-#include "cells/cell.h"
-
-struct Region
-{
-    int x;
-    int y;
-    int dx;
-    int dy;
-    Cell cell_preset;
-};
-
 
 /*
  * We have this class to store the different types of cells dynamically
@@ -35,54 +22,16 @@ void glfw_resize_callback(GLFWwindow* window, int width, int height);
 /**
  * This callback function is the entry point for any logic tied to the mouse
  * input commands. 
- * @button see https://www.glfw.org/docs/3.0/group__buttons.html for types.
- * @action is either GLFW_PRESS or GLFW_RELEASE.
- * @mod is bit field describing which modifier keys were held down.
+ * @param button see https://www.glfw.org/docs/3.0/group__buttons.html for types.
+ * @param action is either GLFW_PRESS or GLFW_RELEASE.
+ * @param mod is bit field describing which modifier keys were held down.
  *   See https://www.glfw.org/docs/3.0/group__mods.html more information
  */
 void glfw_mouse_callback(GLFWwindow* window, int button, int action, int mod);
 
-/**
- * This function is used to check the position of the mouse cursor during a drag
- * action.
- */
-void check_mouse_down(GLFWwindow* window, Grid *grid, int grid_height);
-
-/**
- * Check if the grid needs to be cleared, and performs if it so.
- */
-void check_clear_pressed(Grid *grid);
-
 /*
- * Callback function for keyboard input.
+ * Callback when a keyboard input occurs.
  */
-void key_callback(GLFWwindow* window, int key, __unused int scancode, __unused int action, __unused int mods);
-
-/**
- * Triggers the UI display 
- */
-bool display_ui();
-
-/*
- * Signals to the Quad to render the UI
- */
-void display_ui(__unused Quad* quad);
-
-/**
- * This function will assign the logical placements for the UI buttons
- */
-void ui_partition(int grid_width, int grid_height);
-
-/**
- * Allows switching CellType by iterating through a the ui_regions
- * and getting the corresponding cell_type if there's a match.
- * Should only be called within regions where UI is enabled. 
- */
-void toggle_cell_type(GLFWwindow *window);
-
-/**
- * A helper function used to determine if a mous click is within a rectangular region
- */
-bool within_bounds(int xpos, int ypos, int x, int y, int dx, int dy);
+void glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 #endif
