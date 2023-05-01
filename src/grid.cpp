@@ -101,11 +101,16 @@ void Grid::update(double delta_time) {
 void Grid::simulate_grid(double delta_time)
 {
     // TODO: Use delta_time
+    cell_dirty = new bool[this->height * this->width];
 
     for (std::size_t y = 0; y < this->height; ++y) {
         for (std::size_t x = 0; x < this->width; ++x) {
             glm::uvec2 pos = glm::uvec2(x, y);
             Cell* cell = this->get_cell(pos);
+
+            // if this cell has been updated already, skip
+            if(cell_dirty[(y * this->width) + x] == true)
+                continue;
 
             switch (cell->behavior) {
                 case CellBehavior::LIQUID:
@@ -127,9 +132,19 @@ void Grid::simulate_grid(double delta_time)
 }
 
 void Grid::swap_cells(glm::uvec2 first, glm::uvec2 second) {
+    // don't swap the dirty cell
+    if (cell_dirty[(first.y * this->width) + first.x] == true || 
+        cell_dirty[(second.y * this->width) + second.x] == true) {
+            return;
+    }
+
     Cell temp = *get_cell(second);
     set_cell(second, *get_cell(first));
     set_cell(first, temp);
+
+    if (!temp.is_empty())
+        cell_dirty[(first.y * this->width) + first.x] = true;
+    cell_dirty[(second.y * this->width) + second.x] = true;
 }
 
 bool Grid::simulate_solid(glm::uvec2 position, __unused double delta_time) {
@@ -172,8 +187,8 @@ bool Grid::simulate_solid(glm::uvec2 position, __unused double delta_time) {
     }
     // Solid below
     else if (
-        neighbor_below->behavior == CellBehavior::IMMOVABLE_SOLID || 
-        neighbor_below->behavior == CellBehavior::MOVABLE_SOLID
+        (neighbor_below->behavior == CellBehavior::IMMOVABLE_SOLID || 
+        neighbor_below->behavior == CellBehavior::MOVABLE_SOLID)
     ) {
         // Try with down left
         glm::uvec2 pos_down_left = position + dir::down + dir::left;
@@ -234,7 +249,7 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
         (neighbor_down_left != nullptr && neighbor_down_left->is_empty())
         && neighbor_down_right != nullptr && neighbor_down_right->is_empty()
     ) {
-        bool go_left = std::rand() % 2 == 0;
+        bool go_left = dir::random();
         if (go_left) { 
             swap_cells(position, position + dir::down + dir::left);
         } else {
@@ -263,7 +278,7 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
         (neighbor_left != nullptr && neighbor_left->is_empty())
         && neighbor_right != nullptr && neighbor_right->is_empty()
     ) {
-        bool go_left = std::rand() % 2 == 0;
+        bool go_left = dir::random();
         if (go_left) { 
             swap_cells(position, position + dir::left);
         } else {
