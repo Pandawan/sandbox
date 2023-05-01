@@ -10,4 +10,10 @@ namespace dir {
     const glm::uvec2 right = glm::uvec2(1, 0);
 }
 
+/** 
+ * Gets a random value between a lower and upper limit
+ * @returns a random value between a lower
+ */
+double get_random_value(double lower_lim, double upper_lim);
+
 #endif

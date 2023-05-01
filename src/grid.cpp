@@ -88,7 +88,7 @@ void Grid::generate_texture() {
 void Grid::update(double delta_time) {
     // TODO: Figure out why texture is lost when I put this->dirty == false -> return
 
-    if (!this->paused && this->dirty) {
+    if (!this->paused) {// && this->dirty) {
         this->dirty = false; // Will be set to true by set_cell if ever called in simulate_grid
 
         // Update the position of the cells
@@ -117,7 +117,10 @@ void Grid::simulate_grid(double delta_time)
                 case CellBehavior::IMMOVABLE_SOLID:
                     break;
                 case CellBehavior::GAS:
-                    throw std::logic_error("Not yet implemented");
+                    this->simulate_gas(pos, delta_time);
+                    break;
+                case CellBehavior::PLASMA:
+                    this->simulate_plasma(pos, delta_time);
                     break;
                 case CellBehavior::NONE:
                     break;
@@ -136,11 +139,11 @@ bool Grid::simulate_solid(glm::uvec2 position, __unused double delta_time) {
     Cell* cell = get_cell(position);
     assert(cell->behavior == CellBehavior::MOVABLE_SOLID);
 
-    glm::uvec2 position_below = position + dir::down;
-    Cell* neighbor_below = get_cell(position_below);
+    glm::uvec2 position_down = position + dir::down;
+    Cell* neighbor_down = get_cell(position_down);
 
     // Out of bounds
-    if (neighbor_below == nullptr) return false;
+    if (neighbor_down == nullptr) return false;
     
     //cell.velocity.y += sqrt(2 * GRAVITY * cur_y * this->height);
     //unsigned int amount_down = static_cast<unsigned int>(round(cell.velocity.y * delta_time));
@@ -162,18 +165,18 @@ bool Grid::simulate_solid(glm::uvec2 position, __unused double delta_time) {
 
     // Empty, liquid, or gaseous below
     if (
-        neighbor_below->behavior == CellBehavior::NONE ||
-        neighbor_below->behavior == CellBehavior::LIQUID || 
-        neighbor_below->behavior == CellBehavior::GAS
+        neighbor_down->behavior == CellBehavior::NONE ||
+        neighbor_down->behavior == CellBehavior::LIQUID || 
+        neighbor_down->behavior == CellBehavior::GAS
     ) {
         // Just swap them
-        swap_cells(position, position_below);
+        swap_cells(position, position_down);
         return true;
     }
     // Solid below
     else if (
-        neighbor_below->behavior == CellBehavior::IMMOVABLE_SOLID || 
-        neighbor_below->behavior == CellBehavior::MOVABLE_SOLID
+        neighbor_down->behavior == CellBehavior::IMMOVABLE_SOLID || 
+        neighbor_down->behavior == CellBehavior::MOVABLE_SOLID
     ) {
         // Try with down left
         glm::uvec2 pos_down_left = position + dir::down + dir::left;
@@ -195,6 +198,117 @@ bool Grid::simulate_solid(glm::uvec2 position, __unused double delta_time) {
     }
 
     // If we haven't returned yet, then the cell didn't move.
+    return false;
+}
+
+bool Grid::simulate_plasma(glm::uvec2 position, double delta_time)
+{
+    Cell* cell = get_cell(position);
+    cell->lifetime -= delta_time;
+
+    if (cell->lifetime <= 0) 
+    {
+        set_cell(position, Cell::Empty());
+        return false;
+    }
+
+    glm::uvec2 position_down = position + dir::down;
+    glm::uvec2 position_left = position + dir::left;
+    glm::uvec2 position_right = position + dir::right;
+    glm::uvec2 position_up = position + dir::up;
+
+    Cell* neighbor_down = get_cell(position_down);
+    Cell* neighbor_left = get_cell(position_left);
+    Cell* neighbor_right = get_cell(position_right);
+    Cell* neighbor_up = get_cell(position_up);
+
+    bool success = false;
+    // We do a coinflip to randomize adjacent fire spawning.
+    double threshold = 1;
+    double coinflip;
+
+    // For plasma cells, we should not be swapping but instead creating a clone.
+    if (neighbor_down != nullptr && neighbor_down->behavior == CellBehavior::NONE)
+    {
+        Cell spread = Cell::Fire();
+        set_cell(position_down, spread);
+        get_cell(position_down)->lifetime = cell->lifetime + delta_time * delta_time;
+        success = true;
+    }
+
+    // Check above
+    coinflip = get_random_value(0, 1);
+    if (coinflip < threshold && neighbor_up != nullptr && neighbor_up->behavior == CellBehavior::NONE)
+    {
+        Cell spread = Cell::Fire();
+        set_cell(position_up, spread);
+        get_cell(position_up)->lifetime = cell->lifetime - get_random_value(0, delta_time * 2);
+    }
+
+    // Check left
+    coinflip = get_random_value(0, 1);
+    if (coinflip < threshold && neighbor_left != nullptr && neighbor_left->behavior == CellBehavior::NONE)
+    {
+        Cell spread = Cell::Fire();
+        set_cell(position_left, *cell);
+        get_cell(position_left)->lifetime = cell->lifetime - get_random_value(0, delta_time * 2);
+        success = true;
+    }
+    // Check right
+    coinflip = get_random_value(0, 1);
+    if (coinflip < threshold && neighbor_right != nullptr && neighbor_right->behavior == CellBehavior::NONE)
+    {
+        Cell spread = Cell::Fire();
+        set_cell(position_right, spread);
+        get_cell(position_right)->lifetime = cell->lifetime - get_random_value(0, delta_time * 2);
+        success = true;
+    }
+
+    return success;
+}
+
+bool Grid::simulate_gas(glm::uvec2 position, double delta_time)
+{
+    Cell* cell = get_cell(position);
+    cell->lifetime -= delta_time;
+
+    if (cell->lifetime <= 0) 
+    {
+        set_cell(position, Cell::Empty());
+        return false;
+    }
+
+    glm::uvec2 position_up = position + dir::up;
+    Cell* neighbor_up = get_cell(position_up);
+
+    if (neighbor_up == nullptr) return false;
+
+    // Empty space above.
+    if (neighbor_up->behavior == CellBehavior::NONE) 
+    {
+        swap_cells(position, position_up);
+        return true;
+    }
+    // Above is occupied, try to move to left or right
+    else
+    {
+        glm::uvec2 left = position + dir::left;
+        glm::uvec2 right = position + dir::right;
+        Cell* neighbor_left = get_cell(left);
+        Cell* neighbor_right = get_cell(right);
+
+        if (neighbor_left != nullptr && neighbor_left->behavior == CellBehavior::NONE)
+        {
+            swap_cells(position, left);
+            return true;
+        }
+        else if (neighbor_right != nullptr && neighbor_right->behavior == CellBehavior::NONE)
+        {
+            swap_cells(position, right);
+            return true;
+        }
+    }
+
     return false;
 }
 

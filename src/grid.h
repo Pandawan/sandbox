@@ -41,6 +41,18 @@ private:
      */
     bool simulate_liquid(glm::uvec2 position, double delta_time);
 
+    /**
+     * Simulate a gas cell at the given position.
+     * @returns True if the cell did update/move. 
+     */
+    bool simulate_gas(glm::uvec2 position, double delta_time);
+
+    /**
+     * Simulate a plasma cell at the given position.
+     * @returns True if cell did update/move
+     */
+    bool simulate_plasma(glm::uvec2 position, double delta_time);
+
     /** Swap two cells in the grid. */
     void swap_cells(glm::uvec2 first, glm::uvec2 second);
 
