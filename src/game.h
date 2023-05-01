@@ -19,6 +19,8 @@ private:
 
     /** Mouse position in grid coordinates. */
     glm::uvec2 mouse_pos;
+    /** Mouse is within bounds. */
+    bool mouse_in_view;
     bool mouse_left;
     bool mouse_right;
 
