@@ -107,7 +107,6 @@ void Grid::simulate_grid(double delta_time)
         for (std::size_t x = 0; x < this->width; ++x) {
             glm::uvec2 pos = glm::uvec2(x, y);
             Cell* cell = this->get_cell(pos);
-
             // if this cell has been updated already, skip
             if(cell_dirty[(y * this->width) + x] == true)
                 continue;
@@ -228,55 +227,88 @@ bool Grid::simulate_plasma(glm::uvec2 position, double delta_time)
     }
 
     glm::uvec2 position_down = position + dir::down;
+    glm::uvec2 position_down_left = position_down + dir::left;
+    glm::uvec2 position_down_right = position_down + dir::right;
     glm::uvec2 position_left = position + dir::left;
     glm::uvec2 position_right = position + dir::right;
     glm::uvec2 position_up = position + dir::up;
+    glm::uvec2 position_up_left = position_up + dir::left;
+    glm::uvec2 position_up_right = position_up + dir::right;
 
     Cell* neighbor_down = get_cell(position_down);
+    Cell* neighbor_down_left = get_cell(position_down_left);
+    Cell* neighbor_down_right = get_cell(position_down_right);
     Cell* neighbor_left = get_cell(position_left);
     Cell* neighbor_right = get_cell(position_right);
     Cell* neighbor_up = get_cell(position_up);
+    Cell* neighbor_up_left = get_cell(position_up_left);
+    Cell* neighbor_up_right = get_cell(position_up_right);
 
     bool success = false;
-    // We do a coinflip to randomize adjacent fire spawning.
-    double threshold = 0.7;
+    // We do a coinflip to randomize cell proliferation
     double coinflip;
 
-    // For plasma cells, we should not be swapping but instead creating a clone.
-    if (neighbor_down != nullptr && neighbor_down->behavior == CellBehavior::NONE)
+    // Check below
+    if (neighbor_down != nullptr)
     {
         Cell spread = Cell::Fire();
-        set_cell(position_down, spread);
-        get_cell(position_down)->lifetime = cell->lifetime + delta_time * delta_time;
-        success = true;
+        success = proliferate(&spread, neighbor_down, position_down, cell->lifetime * cell->lifetime);
     }
 
     // Check above
     coinflip = get_random_value(0, 1);
-    if (coinflip < threshold && neighbor_up != nullptr && neighbor_up->behavior == CellBehavior::NONE)
+    if (coinflip < cell->spread_chance && neighbor_up != nullptr)
     {
         Cell spread = Cell::Fire();
-        set_cell(position_up, spread);
-        get_cell(position_up)->lifetime = cell->lifetime - get_random_value(0, delta_time * 2);
+        success = proliferate(&spread, neighbor_up, position_up, cell->lifetime * cell->lifetime);
     }
 
     // Check left
     coinflip = get_random_value(0, 1);
-    if (coinflip < threshold && neighbor_left != nullptr && neighbor_left->behavior == CellBehavior::NONE)
+    if (coinflip < cell->spread_chance && neighbor_left != nullptr)
     {
         Cell spread = Cell::Fire();
-        set_cell(position_left, *cell);
-        get_cell(position_left)->lifetime = cell->lifetime - get_random_value(0, delta_time * 2);
-        success = true;
+        success = proliferate(&spread, neighbor_left, position_left, cell->lifetime * cell->lifetime);
     }
+
     // Check right
     coinflip = get_random_value(0, 1);
-    if (coinflip < threshold && neighbor_right != nullptr && neighbor_right->behavior == CellBehavior::NONE)
+    if (coinflip < cell->spread_chance && neighbor_right != nullptr)
     {
         Cell spread = Cell::Fire();
-        set_cell(position_right, spread);
-        get_cell(position_right)->lifetime = cell->lifetime - get_random_value(0, delta_time * 2);
-        success = true;
+        success = proliferate(&spread, neighbor_right, position_right, cell->lifetime * cell->lifetime);
+    }
+    
+    // Check bottom left
+    coinflip = get_random_value(0, 1);
+    if (coinflip < cell->spread_chance && neighbor_down_left != nullptr)
+    {
+        Cell spread = Cell::Fire();
+        success = proliferate(&spread, neighbor_down_left, position_down_left, cell->lifetime * cell->lifetime);
+    }
+
+    // Check bottom right
+    coinflip = get_random_value(0, 1);
+    if (coinflip < cell->spread_chance && neighbor_down_right != nullptr)
+    {
+        Cell spread = Cell::Fire();
+        success = proliferate(&spread, neighbor_down_right, position_down_right, cell->lifetime * cell->lifetime);
+    }
+
+    // Check top left
+    coinflip = get_random_value(0, 1);
+    if (coinflip < cell->spread_chance && neighbor_up_left != nullptr)
+    {
+        Cell spread = Cell::Fire();
+        success = proliferate(&spread, neighbor_up_left, position_up_left, cell->lifetime * cell->lifetime);
+    }
+
+    // Check top right
+    coinflip = get_random_value(0, 1);
+    if (coinflip < cell->spread_chance && neighbor_up_right != nullptr)
+    {
+        Cell spread = Cell::Fire();
+        success = proliferate(&spread, neighbor_up_right, position_up_right, cell->lifetime * cell->lifetime);
     }
 
     return success;
@@ -401,5 +433,20 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
         return true;
     }
 
+    return false;
+}
+
+bool Grid::proliferate(Cell* spread, Cell* victim, glm::uvec2 victim_pos, double lifetime) {
+    if (victim->behavior == CellBehavior::NONE)
+    {   
+        set_cell(victim_pos, *spread);
+        get_cell(victim_pos)->lifetime = lifetime;
+        return true;
+    }
+    else if (victim->is_combustible)
+    {
+        set_cell(victim_pos, *spread);
+        return true;
+    }
     return false;
 }

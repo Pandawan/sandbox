@@ -7,7 +7,9 @@ Cell::Cell()
       mass(0),
       acceleration(0),
       velocity(0),
-      lifetime(0)
+      lifetime(0),
+      is_combustible(false),
+      spread_chance(0)
 {
 }
 
@@ -22,17 +24,23 @@ Cell::Cell(
     mass(mass),
     acceleration(0),
     velocity(0),
-    lifetime(0)
+    lifetime(0),
+    is_combustible(false),
+    spread_chance(0)
 {
 }
 
 Cell::Cell(const Cell& obj) 
-    : color(obj.color),
+    : 
+      name(obj.name),
+      color(obj.color),
       behavior(obj.behavior),
       mass(obj.mass),
       acceleration(obj.acceleration),
       velocity(obj.velocity),
-      lifetime(obj.lifetime)
+      lifetime(obj.lifetime),
+      is_combustible(obj.is_combustible),
+      spread_chance(obj.spread_chance)
 {
 }
 
@@ -80,8 +88,10 @@ Cell Cell::Wood() {
     glm::u8vec3 color(101, 56, 24);
     CellBehavior behavior = CellBehavior::IMMOVABLE_SOLID;
     double mass = 0;
+    Cell cell = Cell(name, color, behavior, mass);
+    cell.is_combustible = true;
 
-    return Cell(name, color, behavior, mass);
+    return cell;
 }
 
 Cell Cell::Fire() {
@@ -91,7 +101,7 @@ Cell Cell::Fire() {
     double mass = 0; 
     Cell cell = Cell(name, color, behavior, mass);
     cell.lifetime = get_random_value(0.1, 0.2);
-
+    cell.spread_chance = 0.7;
     return cell;
 }
 
@@ -111,5 +121,17 @@ Cell Cell::Lava() {
     glm::u8vec3 color(207, 16, 32);
     CellBehavior behavior = CellBehavior::MOVABLE_SOLID;
     double mass = 0;
+
     return Cell(name, color, behavior, mass);
+}
+
+Cell Cell::Grass() {
+    std::string name = "grass";
+    glm::u8vec3 color(124, 252, 0);
+    CellBehavior behavior = CellBehavior::MOVABLE_SOLID;
+    double mass = 0;
+    Cell cell = Cell(name, color, behavior, mass);
+    cell.is_combustible = true;
+
+    return cell;
 }

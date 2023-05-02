@@ -32,7 +32,8 @@ private:
         Cell::Wood(),
         Cell::Fire(),
         Cell::Smoke(),
-        Cell::Lava()
+        Cell::Lava(),
+        Cell::Grass()
     };
     /** Number of columns to render in the UI. */
     std::size_t columns = 5;

@@ -52,6 +52,12 @@ public:
     /** Life time of the cell. Useful for things that should perish i.e. fire. */
     double lifetime;
 
+    /** Some cells just want to see the world burn */
+    bool is_combustible;
+
+    /** Chance of the cell proliferating into the air. */
+    double spread_chance;
+
     bool is_empty();
 
     // Presets
@@ -63,12 +69,7 @@ public:
     static Cell Fire();
     static Cell Smoke();
     static Cell Lava();
-
-    /** 
-     * Returns a vector containing all the cell presets. 
-     * @returns a vector containing each Cell preset.
-     */
-    static std::vector<Cell> get_cell_presets();
+    static Cell Grass();
 };
 
 #endif

@@ -58,6 +58,12 @@ private:
     /** Swap two cells in the grid. */
     void swap_cells(glm::uvec2 first, glm::uvec2 second);
 
+    /** 
+     * Used to proliferate @spread onto @victim and sets lifetime of @victim to @lifetime
+     * @returns True if proliferated successfully
+     */
+    bool proliferate(Cell* spread, Cell* victim, glm::uvec2 victim_pos, double lifetime);
+
 public:
     /** OpenGL id to the generated grid texture. */
     GLuint texture;
