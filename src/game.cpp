@@ -58,18 +58,17 @@ void Game::update_mouse_pos() {
     size_t grid_x = static_cast<size_t>(
         std::clamp(
             floor(mouse_x / (double)window_width * this->width),
-            0.0, (double)this->width
+            0.0, (double)this->width - 1
         )
     );
     size_t grid_y = static_cast<size_t>(
         std::clamp(
             this->height - floor(mouse_y / (double)window_height * this->height),
-            0.0, (double)this->height
+            0.0, (double)this->height - 1
         )
     );
 
     this->mouse_pos = glm::uvec2(grid_x, grid_y);
-
 }
 
 void Game::render() {
