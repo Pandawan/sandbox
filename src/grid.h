@@ -31,6 +31,12 @@ private:
     /** Simulate each Cell element within the grid. */
     void simulate_grid(double delta_time);
 
+    /**
+     * Simulates a freaking bee
+     * @returns True if the beed
+     */
+    bool simulate_bee(glm::uvec2 position, double delta_time);
+
     /** 
      * Simulate a solid cell at the given position.
      * @returns True if the cell did update/move.
