@@ -140,3 +140,14 @@ Cell Cell::Grass() {
 
     return cell;
 }
+
+Cell Cell::Bee() {
+    std::string name = "BEES";
+    glm::u8vec3 color(255, 255, 0);
+    CellBehavior behavior = CellBehavior::BEE;
+    double mass = 0;
+    Cell cell = Cell(name, color, behavior, mass);
+    cell.is_combustible = true;
+
+    return cell;
+}

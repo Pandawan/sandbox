@@ -126,6 +126,9 @@ void Grid::simulate_grid(double delta_time)
                 case CellBehavior::PLASMA:
                     this->simulate_plasma(pos, delta_time);
                     break;
+                case CellBehavior::BEE:
+                    this->simulate_bee(pos, delta_time);
+                    break;
                 case CellBehavior::NONE:
                     break;
             }
@@ -149,6 +152,58 @@ void Grid::swap_cells(glm::uvec2 first, glm::uvec2 second) {
     if (!get_cell(second)->is_empty())
         cell_dirty[(second.y * this->width) + second.x] = true;
 }
+
+bool Grid::simulate_bee(glm::uvec2 position, __unused double delta_time) {
+    glm::uvec2 position_down = position + dir::down;
+    glm::uvec2 position_down_left = position_down + dir::left;
+    glm::uvec2 position_down_right = position_down + dir::right;
+    glm::uvec2 position_left = position + dir::left;
+    glm::uvec2 position_right = position + dir::right;
+    glm::uvec2 position_up = position + dir::up;
+    glm::uvec2 position_up_left = position_up + dir::left;
+    glm::uvec2 position_up_right = position_up + dir::right;
+
+    Cell* neighbor_down = get_cell(position_down);
+    Cell* neighbor_down_left = get_cell(position_down_left);
+    Cell* neighbor_down_right = get_cell(position_down_right);
+    Cell* neighbor_left = get_cell(position_left);
+    Cell* neighbor_right = get_cell(position_right);
+    Cell* neighbor_up = get_cell(position_up);
+    Cell* neighbor_up_left = get_cell(position_up_left);
+    Cell* neighbor_up_right = get_cell(position_up_right);
+
+    std::vector<Cell*>neighbors = {
+        neighbor_down, 
+        neighbor_down_left,
+        neighbor_down_right,
+        neighbor_left,
+        neighbor_right,
+        neighbor_up,
+        neighbor_up_left,
+        neighbor_up_right
+    };
+
+    std::vector<glm::uvec2>positions = {
+        position_down,
+        position_down_left,
+        position_down_right,
+        position_left,
+        position_right,
+        position_up,
+        position_up_left,
+        position_up_right
+    };
+
+    // Choose random cell/position
+    int idx =  rand() % positions.size();
+    bool move_coinflip = get_random_value(0, 1) < 0.2 ? true : false;
+
+    if (neighbors[idx] != nullptr && neighbors[idx]->behavior == CellBehavior::NONE && move_coinflip) {
+        swap_cells(positions[idx], position);
+        return true;
+    }
+    return false;
+}   
 
 bool Grid::simulate_solid(glm::uvec2 position, __unused double delta_time) {
     Cell* cell = get_cell(position);

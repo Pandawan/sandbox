@@ -19,7 +19,8 @@ enum CellBehavior
     MOVABLE_SOLID,
     IMMOVABLE_SOLID,
     PLASMA,
-    GAS
+    GAS,
+    BEE
 };
 
 const double GRAVITY = 9.8f;
@@ -73,6 +74,7 @@ public:
     static Cell Smoke();
     static Cell Lava();
     static Cell Grass();
+    static Cell Bee();
 };
 
 #endif
