@@ -81,6 +81,7 @@ public:
     static Cell Grass();
     static Cell Wet_Grass();
     static Cell Bee();
+    static Cell Wet_Bee();
 };
 
 #endif

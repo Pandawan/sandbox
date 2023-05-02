@@ -9,6 +9,7 @@ Cell::Cell()
       velocity(0),
       lifetime(0),
       is_combustible(false),
+      is_wet(false),
       deathrattle(&Cell::Empty),
       spread_chance(0)
 {
@@ -180,4 +181,13 @@ Cell Cell::Bee() {
     cell.is_combustible = true;
 
     return cell;
+}
+
+Cell Cell::Wet_Bee() {
+    std::string name = "Wet BEES";
+    glm::u8vec3 color(246, 190, 0);
+    CellBehavior behavior = CellBehavior::BEE;
+    double mass = 0;
+
+    return Cell(name, color, behavior, mass);
 }

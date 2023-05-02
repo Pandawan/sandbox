@@ -162,6 +162,8 @@ void Grid::set_wet_cell(glm::uvec2 position) {
         set_cell(position, Cell::Wet_Grass());
     } else if (cell->name == "wood") {
         set_cell(position, Cell::Wet_Wood());
+    } else if (cell->name == "BEES") {
+        set_cell(position, Cell::Wet_Bee());
     }
 } 
 
