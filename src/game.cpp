@@ -1,6 +1,7 @@
 #include "game.h"
 
 #include <iostream>
+#include <algorithm>
 
 Game::Game(
     GLFWwindow* window, 
@@ -48,20 +49,27 @@ void Game::update_mouse_pos() {
     int window_width, window_height;
     glfwGetWindowSize(this->window, &window_width, &window_height); 
 
-    // Calculate grid position
-    std::size_t grid_x = static_cast<std::size_t>(
-        floor(mouse_x) / (double)window_width * this->width
+    this->mouse_in_view = (
+        mouse_x >= 0 && mouse_x < window_width &&
+        mouse_y >= 0 && mouse_y < window_height
     );
-    std::size_t grid_y = this->height - static_cast<std::size_t>(
-        floor(mouse_y) / (double)window_height * this->height
+
+    // Calculate grid position
+    size_t grid_x = static_cast<size_t>(
+        std::clamp(
+            floor(mouse_x / (double)window_width * this->width),
+            0.0, (double)this->width
+        )
+    );
+    size_t grid_y = static_cast<size_t>(
+        std::clamp(
+            this->height - floor(mouse_y / (double)window_height * this->height),
+            0.0, (double)this->height
+        )
     );
 
     this->mouse_pos = glm::uvec2(grid_x, grid_y);
 
-    this->mouse_in_view = (
-        grid_x >= 0 && grid_x < width &&
-        grid_y >= 0 && grid_y < height
-    );
 }
 
 void Game::render() {
@@ -121,8 +129,10 @@ void Game::on_mouse(__unused int button, __unused int action, __unused int mods)
         if (action == GLFW_PRESS) {
             this->mouse_left = true;
 
-            // TODO: This feels a little un-clean but w/e?
-            this->ui.make_selection(this->mouse_pos);
+            if (this->ui.display) {
+                // TODO: This feels a little un-clean but w/e?
+                this->ui.make_selection(this->mouse_pos);
+            }
         }
         else if (action == GLFW_RELEASE) {
             this->mouse_left = false;
