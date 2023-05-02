@@ -55,9 +55,12 @@ public:
     /** Some cells just want to see the world burn */
     bool is_combustible;
 
+    /** When a cell dies, this will create spawn a Cell preset. Currently defaults to empty in constructors. */
+    Cell (*deathrattle)();
+
     /** Chance of the cell proliferating into the air. */
     double spread_chance;
-
+    
     bool is_empty();
 
     // Presets

@@ -9,8 +9,10 @@ Cell::Cell()
       velocity(0),
       lifetime(0),
       is_combustible(false),
+      deathrattle(&Cell::Empty),
       spread_chance(0)
 {
+    
 }
 
 Cell::Cell(
@@ -26,6 +28,7 @@ Cell::Cell(
     velocity(0),
     lifetime(0),
     is_combustible(false),
+    deathrattle(&Cell::Empty),
     spread_chance(0)
 {
 }
@@ -40,6 +43,7 @@ Cell::Cell(const Cell& obj)
       velocity(obj.velocity),
       lifetime(obj.lifetime),
       is_combustible(obj.is_combustible),
+      deathrattle(obj.deathrattle),
       spread_chance(obj.spread_chance)
 {
 }
@@ -102,6 +106,7 @@ Cell Cell::Fire() {
     Cell cell = Cell(name, color, behavior, mass);
     cell.lifetime = get_random_value(0.1, 0.2);
     cell.spread_chance = 0.7;
+
     return cell;
 }
 
@@ -111,7 +116,7 @@ Cell Cell::Smoke() {
     CellBehavior behavior = CellBehavior::GAS;
     double mass = 0;
     Cell cell = Cell(name, color, behavior, mass);
-    cell.lifetime = get_random_value(0.2, 0.4);
+    cell.lifetime = get_random_value(0.8, 1.3);
 
     return cell;
 }

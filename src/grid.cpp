@@ -229,13 +229,14 @@ bool Grid::simulate_plasma(glm::uvec2 position, double delta_time)
 
     if (cell->lifetime <= 0) 
     {   
-        int biased_coin = round(get_random_value(0, 3));
-        if (biased_coin == 0) {
-            set_cell(position, Cell::Smoke());
-            get_cell(position)->lifetime = get_random_value(0.025, 0.05);
-        }
-        else
-            set_cell(position, Cell::Empty());
+        // int biased_coin = round(get_random_value(0, 3));
+        // if (biased_coin == 0) {
+        //     set_cell(position, Cell::Smoke());
+        //     get_cell(position)->lifetime = get_random_value(0.025, 0.05);
+        // }
+        // else
+        //     set_cell(position, Cell::Empty());
+        set_cell(position, cell->deathrattle());
         return false;
     }
 
@@ -503,6 +504,7 @@ bool Grid::proliferate(Cell* spread, Cell* victim, glm::uvec2 victim_pos, double
     else if (victim->is_combustible)
     {
         set_cell(victim_pos, *spread);
+        get_cell(victim_pos)->deathrattle = &Cell::Smoke;
         return true;
     }
     return false;
