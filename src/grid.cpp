@@ -150,6 +150,18 @@ void Grid::swap_cells(glm::uvec2 first, glm::uvec2 second) {
         cell_dirty[(second.y * this->width) + second.x] = true;
 }
 
+void Grid::set_wet_cell(glm::uvec2 position) {
+    Cell* cell = get_cell(position);
+
+    if (cell->name == "sand") {
+        set_cell(position, Cell::Wet_Sand());
+    } else if (cell->name == "grass") {
+        set_cell(position, Cell::Wet_Grass());
+    } else if (cell->name == "wood") {
+        set_cell(position, Cell::Wet_Wood());
+    }
+} 
+
 bool Grid::simulate_solid(glm::uvec2 position, __unused double delta_time) {
     Cell* cell = get_cell(position);
     assert(cell->behavior == CellBehavior::MOVABLE_SOLID);
@@ -419,13 +431,34 @@ bool Grid::simulate_gas(glm::uvec2 position, double delta_time)
 
 bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
 
+    Cell* neighbor_up = get_cell(position + dir::up);
     Cell* neighbor_down = get_cell(position + dir::down);
     Cell* neighbor_left = get_cell(position + dir::left);
     Cell* neighbor_right = get_cell(position + dir::right);
+    Cell* neighbor_up_left = get_cell(position + dir::up + dir::left);
+    Cell* neighbor_up_right = get_cell(position + dir::up + dir::right);
     Cell* neighbor_down_left = get_cell(position + dir::down + dir::left);
     Cell* neighbor_down_right = get_cell(position + dir::down + dir::right);
-
+    
     // TODO: Refactor this, this isn't clean code
+
+    // Get all your neighbors soaking wet
+    if (neighbor_up != nullptr)
+        set_wet_cell(position + dir::up);
+    if (neighbor_up_left != nullptr)
+        set_wet_cell(position + dir::up + dir::left);
+    if (neighbor_up_right != nullptr)
+        set_wet_cell(position + dir::up + dir::right);
+    if (neighbor_down != nullptr)
+        set_wet_cell(position + dir::down);
+    if (neighbor_down_left != nullptr)
+        set_wet_cell(position + dir::down + dir::left);
+    if (neighbor_down_right != nullptr)
+        set_wet_cell(position + dir::down + dir::right);
+    if (neighbor_left != nullptr)
+        set_wet_cell(position + dir::left);
+    if (neighbor_right != nullptr)
+        set_wet_cell(position + dir::right);
 
     // Down
     if (neighbor_down != nullptr && neighbor_down->is_empty()) {

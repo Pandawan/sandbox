@@ -28,6 +28,7 @@ Cell::Cell(
     velocity(0),
     lifetime(0),
     is_combustible(false),
+    is_wet(false),
     deathrattle(&Cell::Empty),
     spread_chance(0)
 {
@@ -43,6 +44,7 @@ Cell::Cell(const Cell& obj)
       velocity(obj.velocity),
       lifetime(obj.lifetime),
       is_combustible(obj.is_combustible),
+      is_wet(obj.is_wet),
       deathrattle(obj.deathrattle),
       spread_chance(obj.spread_chance)
 {
@@ -68,6 +70,16 @@ Cell Cell::Sand() {
 
     return Cell(name, color, behavior, mass);
 }
+
+Cell Cell::Wet_Sand() {
+    std::string name = "wet sand";
+    glm::u8vec3 color(173, 162, 142);
+    CellBehavior behavior = CellBehavior::MOVABLE_SOLID;
+    double mass = 1520;
+
+    return Cell(name, color, behavior, mass);
+}
+
 
 Cell Cell::Water() {
     std::string name = "water";
@@ -96,6 +108,15 @@ Cell Cell::Wood() {
     cell.is_combustible = true;
 
     return cell;
+}
+
+Cell Cell::Wet_Wood() {
+    std::string name = "wet wood";
+    glm::u8vec3 color(85, 60, 42);
+    CellBehavior behavior = CellBehavior::IMMOVABLE_SOLID;
+    double mass = 0;
+
+    return Cell(name, color, behavior, mass);
 }
 
 Cell Cell::Fire() {
@@ -139,4 +160,13 @@ Cell Cell::Grass() {
     cell.is_combustible = true;
 
     return cell;
+}
+
+Cell Cell::Wet_Grass() {
+    std::string name = "wet grass";
+    glm::u8vec3 color(119, 187, 46);
+    CellBehavior behavior = CellBehavior::MOVABLE_SOLID;
+    double mass = 0;
+
+    return Cell(name, color, behavior, mass);
 }

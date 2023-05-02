@@ -58,6 +58,9 @@ private:
     /** Swap two cells in the grid. */
     void swap_cells(glm::uvec2 first, glm::uvec2 second);
 
+    /** Change cell type after interacting with liquid */
+    void set_wet_cell(glm::uvec2 position);
+
     /** 
      * Used to proliferate @spread onto @victim and sets lifetime of @victim to @lifetime
      * @returns True if proliferated successfully

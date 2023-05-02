@@ -55,6 +55,9 @@ public:
     /** Some cells just want to see the world burn */
     bool is_combustible;
 
+    /** Some cells just want to get wet */
+    bool is_wet;
+
     /** When a cell dies, this will create spawn a Cell preset. Currently defaults to empty in constructors. */
     Cell (*deathrattle)();
 
@@ -66,13 +69,16 @@ public:
     // Presets
     static Cell Empty();
     static Cell Sand();
+    static Cell Wet_Sand();
     static Cell Water();
     static Cell Stone();
     static Cell Wood();
+    static Cell Wet_Wood();
     static Cell Fire();
     static Cell Smoke();
     static Cell Lava();
     static Cell Grass();
+    static Cell Wet_Grass();
 };
 
 #endif
