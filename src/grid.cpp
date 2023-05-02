@@ -401,12 +401,17 @@ bool Grid::simulate_gas(glm::uvec2 position, double delta_time)
 {
     Cell* cell = get_cell(position);
     cell->lifetime -= delta_time;
+    cell->velocity_delay -= delta_time;
 
     if (cell->lifetime <= 0) 
     {
         set_cell(position, Cell::Empty());
         return false;
     }
+
+    double delay_chance = get_random_value(0, 1);
+    if (delay_chance < cell->velocity_delay)
+        return false;
 
     glm::uvec2 position_up = position + dir::up;
     //Cell* neighbor_up = get_cell(position_up);
@@ -487,6 +492,10 @@ bool Grid::simulate_gas(glm::uvec2 position, double delta_time)
 }
 
 bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
+    Cell* cell = get_cell(position);
+    double delay_chance = get_random_value(0, 1);
+    if (delay_chance < cell->velocity_delay)
+        return false;
 
     Cell* neighbor_up = get_cell(position + dir::up);
     Cell* neighbor_down = get_cell(position + dir::down);

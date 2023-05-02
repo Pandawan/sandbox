@@ -7,6 +7,7 @@ Cell::Cell()
       mass(0),
       acceleration(0),
       velocity(0),
+      velocity_delay(1),
       lifetime(0),
       is_combustible(false),
       is_wet(false),
@@ -27,6 +28,7 @@ Cell::Cell(
     mass(mass),
     acceleration(0),
     velocity(0),
+    velocity_delay(1),
     lifetime(0),
     is_combustible(false),
     is_wet(false),
@@ -43,6 +45,7 @@ Cell::Cell(const Cell& obj)
       mass(obj.mass),
       acceleration(obj.acceleration),
       velocity(obj.velocity),
+      velocity_delay(obj.velocity_delay),
       lifetime(obj.lifetime),
       is_combustible(obj.is_combustible),
       is_wet(obj.is_wet),
@@ -87,8 +90,10 @@ Cell Cell::Water() {
     glm::u8vec3 color(116, 204, 244);
     CellBehavior behavior = CellBehavior::LIQUID;
     double mass = 1000;
+    Cell cell = Cell(name, color, behavior, mass);
+    cell.velocity_delay = 0.15;
 
-    return Cell(name, color, behavior, mass);
+    return cell;
 }
 
 Cell Cell::Stone() {
@@ -138,7 +143,8 @@ Cell Cell::Smoke() {
     CellBehavior behavior = CellBehavior::GAS;
     double mass = 0;
     Cell cell = Cell(name, color, behavior, mass);
-    cell.lifetime = get_random_value(0.8, 1.3);
+    cell.lifetime = get_random_value(1.25, 1.75);
+    cell.velocity_delay = 0.85;
 
     return cell;
 }

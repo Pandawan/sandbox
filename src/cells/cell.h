@@ -49,6 +49,7 @@ public:
     // Runtime State
     glm::dvec2 acceleration;
     glm::dvec2 velocity;
+    double velocity_delay;
 
     /** Life time of the cell. Useful for things that should perish i.e. fire. */
     double lifetime;
