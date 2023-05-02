@@ -101,7 +101,7 @@ void Grid::update(double delta_time) {
 void Grid::simulate_grid(double delta_time)
 {
     // TODO: Use delta_time
-    cell_dirty = new bool[this->height * this->width];
+    cell_dirty = new bool[this->height * this->width]();
 
     for (std::size_t y = 0; y < this->height; ++y) {
         for (std::size_t x = 0; x < this->width; ++x) {
@@ -144,9 +144,10 @@ void Grid::swap_cells(glm::uvec2 first, glm::uvec2 second) {
     set_cell(second, *get_cell(first));
     set_cell(first, temp);
 
-    if (!temp.is_empty())
+    if (!get_cell(first)->is_empty())
         cell_dirty[(first.y * this->width) + first.x] = true;
-    cell_dirty[(second.y * this->width) + second.x] = true;
+    if (!get_cell(second)->is_empty())
+        cell_dirty[(second.y * this->width) + second.x] = true;
 }
 
 bool Grid::simulate_solid(glm::uvec2 position, __unused double delta_time) {
@@ -194,17 +195,23 @@ bool Grid::simulate_solid(glm::uvec2 position, __unused double delta_time) {
     ) {
         // Try with down left
         glm::uvec2 pos_down_left = position + dir::down + dir::left;
-        Cell* cell_down_left = get_cell(pos_down_left);
+        Cell* neighbor_down_left = get_cell(pos_down_left);
         // TODO: Should this allow sand dropping into liquid from the side? If so, should probably add an abstraction like "try_move" or something?
-        if (cell_down_left != nullptr && cell_down_left->is_empty()) {
+        if (neighbor_down_left != nullptr && 
+            (neighbor_down_left->behavior == CellBehavior::NONE ||
+            neighbor_down_left->behavior == CellBehavior::LIQUID || 
+            neighbor_down_left->behavior == CellBehavior::GAS)) {
             swap_cells(position, pos_down_left);
             return true;
         }
         else {
             // Try with down right
             glm::uvec2 pos_down_right = position + dir::down + dir::right;
-            Cell* cell_down_right = get_cell(pos_down_right);
-            if (cell_down_right != nullptr && cell_down_right->is_empty()) {
+            Cell* neighbor_down_right = get_cell(pos_down_right);
+            if (neighbor_down_right != nullptr && 
+                (neighbor_down_right->behavior == CellBehavior::NONE ||
+                neighbor_down_right->behavior == CellBehavior::LIQUID || 
+                neighbor_down_right->behavior == CellBehavior::GAS)) {
                 swap_cells(position, pos_down_right);
                 return true;
             }
@@ -221,8 +228,14 @@ bool Grid::simulate_plasma(glm::uvec2 position, double delta_time)
     cell->lifetime -= delta_time;
 
     if (cell->lifetime <= 0) 
-    {
-        set_cell(position, Cell::Empty());
+    {   
+        int biased_coin = round(get_random_value(0, 3));
+        if (biased_coin == 0) {
+            set_cell(position, Cell::Smoke());
+            get_cell(position)->lifetime = get_random_value(0.025, 0.05);
+        }
+        else
+            set_cell(position, Cell::Empty());
         return false;
     }
 
@@ -252,7 +265,7 @@ bool Grid::simulate_plasma(glm::uvec2 position, double delta_time)
     if (neighbor_down != nullptr)
     {
         Cell spread = Cell::Fire();
-        success = proliferate(&spread, neighbor_down, position_down, cell->lifetime * cell->lifetime);
+        success = proliferate(&spread, neighbor_down, position_down, cell->lifetime * cell->lifetime); 
     }
 
     // Check above
@@ -326,34 +339,78 @@ bool Grid::simulate_gas(glm::uvec2 position, double delta_time)
     }
 
     glm::uvec2 position_up = position + dir::up;
-    Cell* neighbor_up = get_cell(position_up);
+    //Cell* neighbor_up = get_cell(position_up);
 
-    if (neighbor_up == nullptr) return false;
+    Cell* neighbor_up = get_cell(position + dir::up);
+    Cell* neighbor_left = get_cell(position + dir::left);
+    Cell* neighbor_right = get_cell(position + dir::right);
+    Cell* neighbor_up_left = get_cell(position + dir::up + dir::left);
+    Cell* neighbor_up_right = get_cell(position + dir::up + dir::right);
 
     // Empty space above.
-    if (neighbor_up->behavior == CellBehavior::NONE) 
+    if (neighbor_up != nullptr && neighbor_up->behavior == CellBehavior::NONE) 
     {
         swap_cells(position, position_up);
         return true;
     }
     // Above is occupied, try to move to left or right
-    else
-    {
-        glm::uvec2 left = position + dir::left;
-        glm::uvec2 right = position + dir::right;
-        Cell* neighbor_left = get_cell(left);
-        Cell* neighbor_right = get_cell(right);
-
-        if (neighbor_left != nullptr && neighbor_left->behavior == CellBehavior::NONE)
-        {
-            swap_cells(position, left);
-            return true;
+    // up left only
+    else if (
+        neighbor_up_left != nullptr && neighbor_up_left->is_empty() 
+        && (neighbor_up_right == nullptr || neighbor_up_right->behavior != CellBehavior::NONE)
+    ) {
+        swap_cells(position, position + dir::up + dir::left);
+        return true;
+    }
+    // up right only
+    else if (
+        (neighbor_up_left == nullptr || neighbor_up_left->behavior != CellBehavior::NONE)
+        && neighbor_up_right != nullptr && neighbor_up_right->is_empty()
+    ) {
+        swap_cells(position, position + dir::up + dir::right);
+        return true;
+    }
+    // up left OR up right
+    else if (
+        (neighbor_up_left != nullptr && neighbor_up_left->is_empty())
+        && neighbor_up_right != nullptr && neighbor_up_right->is_empty()
+    ) {
+        bool go_left = coinflip();
+        if (go_left) { 
+            swap_cells(position, position + dir::up + dir::left);
+        } else {
+            swap_cells(position, position + dir::up + dir::right);
         }
-        else if (neighbor_right != nullptr && neighbor_right->behavior == CellBehavior::NONE)
-        {
-            swap_cells(position, right);
-            return true;
+        return true;
+    }
+    // Left only
+    else if (
+        neighbor_left != nullptr && neighbor_left->is_empty() 
+        && (neighbor_right == nullptr || neighbor_right->behavior != CellBehavior::NONE)
+    ) {
+        swap_cells(position, position + dir::left);
+        return true;
+    }
+    // Right only
+    else if (
+        (neighbor_left == nullptr || neighbor_left->behavior != CellBehavior::NONE)
+        && neighbor_right != nullptr && neighbor_right->is_empty()
+    ) {
+        swap_cells(position, position + dir::right);
+        return true;
+    }
+    // Left OR Right
+    else if (
+        (neighbor_left != nullptr && neighbor_left->is_empty())
+        && neighbor_right != nullptr && neighbor_right->is_empty()
+    ) {
+        bool go_left = coinflip();
+        if (go_left) { 
+            swap_cells(position, position + dir::left);
+        } else {
+            swap_cells(position, position+ dir::right);
         }
+        return true;
     }
 
     return false;

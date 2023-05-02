@@ -111,7 +111,7 @@ Cell Cell::Smoke() {
     CellBehavior behavior = CellBehavior::GAS;
     double mass = 0;
     Cell cell = Cell(name, color, behavior, mass);
-    cell.lifetime = get_random_value(1, 2);
+    cell.lifetime = get_random_value(0.2, 0.4);
 
     return cell;
 }
