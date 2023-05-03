@@ -43,8 +43,14 @@ private:
     /** Cell kind to use for selection outline. */
     Cell selected_cell_kind = Cell("ui", glm::u8vec3(252, 245, 104), CellBehavior::IMMOVABLE_SOLID, 0);
 
+    std::size_t text_row_count = 10;
+    std::size_t text_row_margin = 1;
+
     /** Render grid with UI elements. */
     void render_grid();
+
+    /** Render text in the top 8 rows of the grid. */
+    void render_text();
 
 public:
     /** Whether or not to display the UI. */
