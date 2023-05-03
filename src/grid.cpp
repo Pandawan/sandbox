@@ -267,24 +267,31 @@ bool Grid::simulate_solid(glm::uvec2 position, __unused double delta_time) {
         neighbor_down->behavior == CellBehavior::MOVABLE_SOLID
     ) {
         // Try with down left
+        glm::uvec2 pos_left = position + dir::left;
         glm::uvec2 pos_down_left = position + dir::down + dir::left;
+        
+        Cell* neighbor_left = get_cell(pos_left);
         Cell* neighbor_down_left = get_cell(pos_down_left);
         // TODO: Should this allow sand dropping into liquid from the side? If so, should probably add an abstraction like "try_move" or something?
         if (neighbor_down_left != nullptr && 
             (neighbor_down_left->behavior == CellBehavior::NONE ||
             neighbor_down_left->behavior == CellBehavior::LIQUID || 
-            neighbor_down_left->behavior == CellBehavior::GAS)) {
+            neighbor_down_left->behavior == CellBehavior::GAS) &&
+            neighbor_left->behavior != CellBehavior::IMMOVABLE_SOLID) {
             swap_cells(position, pos_down_left);
             return true;
         }
         else {
             // Try with down right
             glm::uvec2 pos_down_right = position + dir::down + dir::right;
+            glm::uvec2 pos_right = position + dir::right;
             Cell* neighbor_down_right = get_cell(pos_down_right);
+            Cell* neighbor_right = get_cell(pos_right);
             if (neighbor_down_right != nullptr && 
                 (neighbor_down_right->behavior == CellBehavior::NONE ||
                 neighbor_down_right->behavior == CellBehavior::LIQUID || 
-                neighbor_down_right->behavior == CellBehavior::GAS)) {
+                neighbor_down_right->behavior == CellBehavior::GAS) &&
+                neighbor_right->behavior != CellBehavior::IMMOVABLE_SOLID) {
                 swap_cells(position, pos_down_right);
                 return true;
             }
@@ -537,34 +544,34 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
         success = true;
     }
     // Down left only
-    else if (
-        neighbor_down_left != nullptr && neighbor_down_left->is_empty() 
-        && (neighbor_down_right == nullptr || neighbor_down_right->behavior != CellBehavior::NONE)
-    ) {
-        swap_cells(position, position + dir::down + dir::left);
-        success = true;
-    }
+    // else if (
+    //     neighbor_down_left != nullptr && neighbor_down_left->is_empty() 
+    //     && (neighbor_down_right == nullptr || neighbor_down_right->behavior != CellBehavior::NONE)
+    // ) {
+    //     swap_cells(position, position + dir::down + dir::left);
+    //     success = true;
+    // }
     // Down right only
-    else if (
-        (neighbor_down_left == nullptr || neighbor_down_left->behavior != CellBehavior::NONE)
-        && neighbor_down_right != nullptr && neighbor_down_right->is_empty()
-    ) {
-        swap_cells(position, position + dir::down + dir::right);
-        success = true;
-    }
+    // else if (
+    //     (neighbor_down_left == nullptr || neighbor_down_left->behavior != CellBehavior::NONE)
+    //     && neighbor_down_right != nullptr && neighbor_down_right->is_empty()
+    // ) {
+    //     swap_cells(position, position + dir::down + dir::right);
+    //     success = true;
+    // }
     // Down left OR Down right
-    else if (
-        (neighbor_down_left != nullptr && neighbor_down_left->is_empty())
-        && neighbor_down_right != nullptr && neighbor_down_right->is_empty()
-    ) {
-        bool go_left = coinflip();
-        if (go_left) { 
-            swap_cells(position, position + dir::down + dir::left);
-        } else {
-            swap_cells(position, position + dir::down + dir::right);
-        }
-        success = true;
-    }
+    // else if (
+    //     (neighbor_down_left != nullptr && neighbor_down_left->is_empty())
+    //     && neighbor_down_right != nullptr && neighbor_down_right->is_empty()
+    // ) {
+    //     bool go_left = coinflip();
+    //     if (go_left) { 
+    //         swap_cells(position, position + dir::down + dir::left);
+    //     } else {
+    //         swap_cells(position, position + dir::down + dir::right);
+    //     }
+    //     success = true;
+    // }
     // Left only
     else if (
         neighbor_left != nullptr && neighbor_left->is_empty() 
