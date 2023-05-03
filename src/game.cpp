@@ -13,6 +13,7 @@ Game::Game(
     world(window, width, height),
     ui(window, width, height)
 {
+    this->mouse_left = false;
     glfwSetWindowUserPointer(this->window, this);
 }
 
