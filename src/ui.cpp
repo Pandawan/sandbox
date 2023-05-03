@@ -45,12 +45,10 @@ void UI::render_text() {
 
         unsigned char* bitmap = font8x8_basic[static_cast<std::size_t>(c)];
 
-        for (std::size_t local_y = 0; local_y < 8; local_y++) {
-            for (std::size_t local_x = 0; local_x < 8; local_x++) {
-                bool set = bitmap[local_x] & 1 << local_y;
-                // glm::uvec2 cell_pos = glm::uvec2(x + local_x, y + local_y);
-                glm::uvec2 cell_pos = glm::uvec2(x + local_y, y + (7 - local_x));
-
+        for (std::size_t local_x = 0; local_x < 8; local_x++) {
+            for (std::size_t local_y = 0; local_y < 8; local_y++) {
+                bool set = bitmap[local_y] & 1 << local_x;
+                glm::uvec2 cell_pos = glm::uvec2(x + local_x, y + (7 - local_y));
 
                 if (set) {
                     this->grid.set_cell(cell_pos, selected_cell_kind);
