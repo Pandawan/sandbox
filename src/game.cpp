@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <sstream>
 
 Game::Game(
     GLFWwindow* window, 
@@ -18,7 +19,15 @@ Game::Game(
 }
 
 void Game::update(double delta_time) {
+    // Refresh stored mouse position
     this->update_mouse_pos();
+
+    // Update window title with selected cell kind
+    Cell cell_kind = this->ui.get_selected();
+    std::stringstream ss;
+    ss << "Sandbox (" << cell_kind.name << ")" << std::endl; 
+    glfwSetWindowTitle(this->window, ss.str().c_str());
+
 
     // TODO: Is this good? Should we just keep updating UI anyway?
     if (this->ui.display) {
@@ -32,7 +41,6 @@ void Game::update(double delta_time) {
             // TODO: This feels slightly gross; I feel like the World itself should worry about this stuff
             // Set cells based on mouse input
             if (this->mouse_left) {
-                Cell cell_kind = this->ui.get_selected();
                 this->world.get_grid()->set_cell(this->mouse_pos, cell_kind);
             } else if (this->mouse_right) {
                 this->world.get_grid()->set_cell(this->mouse_pos, Cell::Empty());
@@ -128,6 +136,8 @@ void Game::on_mouse(__unused int button, __unused int action, __unused int mods)
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
         if (action == GLFW_PRESS) {
             this->mouse_left = true;
+            // Need to disable the other mouse button just in case
+            this->mouse_right = false;
 
             if (this->ui.display) {
                 // TODO: This feels a little un-clean but w/e?
@@ -141,6 +151,8 @@ void Game::on_mouse(__unused int button, __unused int action, __unused int mods)
     else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
         if (action == GLFW_PRESS) {
             this->mouse_right = true;
+            // Need to disable the other mouse button just in case
+            this->mouse_left = false;
         }
         else if (action == GLFW_RELEASE) {
             this->mouse_right = false;
