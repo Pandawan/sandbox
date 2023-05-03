@@ -164,6 +164,8 @@ void Grid::set_wet_cell(glm::uvec2 position) {
         set_cell(position, Cell::Wet_Wood());
     } else if (cell->name == "BEES") {
         set_cell(position, Cell::Wet_Bee());
+    } else if (cell->name == "lava") {
+        set_cell(position, Cell::Obsidian());
     }
 } 
 
@@ -494,8 +496,9 @@ bool Grid::simulate_gas(glm::uvec2 position, double delta_time)
 bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
     Cell* cell = get_cell(position);
     double delay_chance = get_random_value(0, 1);
+    bool success = false;
     if (delay_chance < cell->velocity_delay)
-        return false;
+        return success;
 
     Cell* neighbor_up = get_cell(position + dir::up);
     Cell* neighbor_down = get_cell(position + dir::down);
@@ -529,7 +532,7 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
     // Down
     if (neighbor_down != nullptr && neighbor_down->is_empty()) {
         swap_cells(position, position + dir::down);
-        return true;
+        success = true;
     }
     // Down left only
     else if (
@@ -537,7 +540,7 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
         && (neighbor_down_right == nullptr || neighbor_down_right->behavior != CellBehavior::NONE)
     ) {
         swap_cells(position, position + dir::down + dir::left);
-        return true;
+        success = true;
     }
     // Down right only
     else if (
@@ -545,7 +548,7 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
         && neighbor_down_right != nullptr && neighbor_down_right->is_empty()
     ) {
         swap_cells(position, position + dir::down + dir::right);
-        return true;
+        success = true;
     }
     // Down left OR Down right
     else if (
@@ -558,7 +561,7 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
         } else {
             swap_cells(position, position + dir::down + dir::right);
         }
-        return true;
+        success = true;
     }
     // Left only
     else if (
@@ -566,7 +569,7 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
         && (neighbor_right == nullptr || neighbor_right->behavior != CellBehavior::NONE)
     ) {
         swap_cells(position, position + dir::left);
-        return true;
+        success = true;
     }
     // Right only
     else if (
@@ -574,7 +577,7 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
         && neighbor_right != nullptr && neighbor_right->is_empty()
     ) {
         swap_cells(position, position + dir::right);
-        return true;
+        success = true;
     }
     // Left OR Right
     else if (
@@ -587,10 +590,10 @@ bool Grid::simulate_liquid(glm::uvec2 position, __unused double delta_time) {
         } else {
             swap_cells(position, position+ dir::right);
         }
-        return true;
+        success = true;
     }
 
-    return false;
+    return success;
 }
 
 bool Grid::proliferate(Cell* spread, Cell* victim, glm::uvec2 victim_pos, double lifetime) {

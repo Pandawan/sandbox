@@ -154,8 +154,10 @@ Cell Cell::Lava() {
     glm::u8vec3 color(207, 16, 32);
     CellBehavior behavior = CellBehavior::MOVABLE_SOLID;
     double mass = 0;
-
-    return Cell(name, color, behavior, mass);
+    Cell cell = Cell(name, color, behavior, mass);
+    cell.deathrattle = &Cell::Obsidian;
+    
+    return cell;
 }
 
 Cell Cell::Grass() {
@@ -193,6 +195,15 @@ Cell Cell::Wet_Bee() {
     std::string name = "Wet BEES";
     glm::u8vec3 color(246, 190, 0);
     CellBehavior behavior = CellBehavior::BEE;
+    double mass = 0;
+
+    return Cell(name, color, behavior, mass);
+}
+
+Cell Cell::Obsidian() {
+    std::string name = "obsidian";
+    glm::u8vec3 color(58, 50, 45);
+    CellBehavior behavior = CellBehavior::IMMOVABLE_SOLID;
     double mass = 0;
 
     return Cell(name, color, behavior, mass);

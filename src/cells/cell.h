@@ -83,6 +83,7 @@ public:
     static Cell Wet_Grass();
     static Cell Bee();
     static Cell Wet_Bee();
+    static Cell Obsidian();
 };
 
 #endif
