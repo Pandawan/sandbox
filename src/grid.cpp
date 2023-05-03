@@ -156,6 +156,8 @@ void Grid::swap_cells(glm::uvec2 first, glm::uvec2 second) {
 void Grid::set_wet_cell(glm::uvec2 position) {
     Cell* cell = get_cell(position);
 
+    // TODO: Ideally, each cell would just have a pointer to its corresponding Wet version? 
+    // Or maybe have some further properties describing the color when wet? Just to not have to hardcode stuff.
     if (cell->name == "sand") {
         set_cell(position, Cell::Wet_Sand());
     } else if (cell->name == "grass") {
@@ -212,7 +214,7 @@ bool Grid::simulate_bee(glm::uvec2 position, __unused double delta_time) {
     int idx =  rand() % positions.size();
     bool move_coinflip = get_random_value(0, 1) < 0.2 ? true : false;
 
-    if (neighbors[idx] != nullptr && neighbors[idx]->behavior == CellBehavior::NONE && move_coinflip) {
+    if (neighbors[idx] != nullptr && neighbors[idx]->is_empty() && move_coinflip) {
         swap_cells(positions[idx], position);
         return true;
     }
@@ -334,7 +336,7 @@ bool Grid::simulate_plasma(glm::uvec2 position, double delta_time)
     // Check below
     if (neighbor_down != nullptr)
     {
-        Cell spread = Cell::Fire();
+        Cell spread = Cell::Fire(); // TODO: I wish this didn't hardcode the "fire" but just copied itself
         success = proliferate(&spread, neighbor_down, position_down, cell->lifetime * cell->lifetime); 
     }
 
