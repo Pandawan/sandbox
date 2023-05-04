@@ -11,6 +11,10 @@ Game::Game(
 ) : window(window),
     width(width),
     height(height),
+    mouse_pos(0),
+    mouse_in_view(false),
+    mouse_left(false),
+    mouse_right(false),
     world(window, width, height),
     ui(window, width, height)
 {

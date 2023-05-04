@@ -42,6 +42,9 @@ void Grid::set_cell(glm::uvec2 position, Cell value) {
     this->dirty = true;
 }
 
+// TODO: Make this Cell const*, we should not be modifying existing cells, only setting new ones.
+// This currently causes a bug because proliferate expects to modify lifetime of existing cells.
+// This is a BUG because modifying a cell in place does not set the Grid::dirty flag
 Cell* Grid::get_cell(glm::uvec2 position) {
     if (
         position.x < 0 || position.x >= width || 

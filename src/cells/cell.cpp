@@ -58,7 +58,7 @@ Cell::~Cell()
 {
 }
 
-bool Cell::is_empty() {
+bool Cell::is_empty() const {
     return this->behavior == CellBehavior::NONE;
 }
 

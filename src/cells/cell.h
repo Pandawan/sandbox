@@ -66,7 +66,7 @@ public:
     /** Chance of the cell proliferating into the air. */
     double spread_chance;
     
-    bool is_empty();
+    bool is_empty() const;
 
     // Presets
     static Cell Empty();
