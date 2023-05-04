@@ -74,26 +74,28 @@ void Quad::render()
     glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ebo);
 
-    // Compute rendering size
-    int window_width, window_height;
-    glfwGetWindowSize(this->window, &window_width, &window_height);
-    double window_aspect_ratio = (double)window_width / (double)window_height;
+    // // Compute rendering size
+    // int window_width, window_height;
+    // glfwGetWindowSize(this->window, &window_width, &window_height);
+    // double window_aspect_ratio = (double)window_width / (double)window_height;
 
-    int texture_width, texture_height;
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &texture_width);
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &texture_height);
-    double texture_aspect_ratio = (double)texture_width / (double)texture_height;
+    // int texture_width, texture_height;
+    // glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &texture_width);
+    // glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &texture_height);
+    // double texture_aspect_ratio = (double)texture_width / (double)texture_height;
 
-    // Source: https://bumbershootsoft.wordpress.com/2017/11/26/gtk3-aspect-corrected-image-scaling-with-opengl/
-    double scale_width, scale_height;
-    if (window_aspect_ratio < texture_aspect_ratio) {
-        scale_width = 1;
-        scale_height = window_aspect_ratio / texture_aspect_ratio;
-    } 
-    else {
-        scale_width = texture_aspect_ratio / window_aspect_ratio;
-        scale_height = 1;
-    }
+    // // Source: https://bumbershootsoft.wordpress.com/2017/11/26/gtk3-aspect-corrected-image-scaling-with-opengl/
+    // double scale_width, scale_height;
+    // if (window_aspect_ratio < texture_aspect_ratio) {
+    //     scale_width = 1;
+    //     scale_height = window_aspect_ratio / texture_aspect_ratio;
+    // } 
+    // else {
+    //     scale_width = texture_aspect_ratio / window_aspect_ratio;
+    //     scale_height = 1;
+    // }
+    double scale_width = 1;
+    double scale_height = 1;
 
     // Bind shader
     shader.Use();
