@@ -18,6 +18,10 @@ void World::update(double delta_time) {
     grid.update(delta_time);
 }
 
+void World::fixed_update(double delta_time) {
+    grid.fixed_update(delta_time);
+}
+
 void World::render() {
     quad.render();
 }

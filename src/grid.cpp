@@ -88,7 +88,14 @@ void Grid::generate_texture() {
     delete[] data;
 }
 
-void Grid::update(double delta_time) {
+void Grid::update(__unused double delta_time) {
+    if (this->dirty) {
+        // Generate a texture from the new grid
+        generate_texture();
+    }
+}
+
+void Grid::fixed_update(double delta_time) {
     // TODO: Figure out why texture is lost when I put this->dirty == false -> return
 
     if (!this->paused) {// && this->dirty) {
@@ -97,8 +104,6 @@ void Grid::update(double delta_time) {
         // Update the position of the cells
         simulate_grid(delta_time);
     }
-    // Generate a texture from the new cell positions
-    generate_texture();
 }
 
 void Grid::simulate_grid(double delta_time)

@@ -59,6 +59,7 @@ public:
     UI(GLFWwindow* window, std::size_t width, std::size_t height);
 
     void update(double delta_time);
+    void fixed_update(double delta_time);
     void render();
 
     void set_selected(std::size_t index);

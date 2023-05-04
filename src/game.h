@@ -32,7 +32,16 @@ public:
 
     Game(GLFWwindow* window, std::size_t width, std::size_t height);
 
+    /**
+     * Update performed on every frame. 
+     * Use this for input-dependent behavior. 
+     */
     void update(double delta_time);
+    /** 
+     * Update performed on a fixed tick interval. 
+     * Use this for simulation/physics behavior.
+     */
+    void fixed_update(double delta_time);
     void render();
 
     /** Key event handler. */

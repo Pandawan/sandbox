@@ -18,41 +18,50 @@ Game::Game(
     world(window, width, height),
     ui(window, width, height)
 {
-    this->mouse_left = false;
     glfwSetWindowUserPointer(this->window, this);
 }
 
 void Game::update(double delta_time) {
+    // Update window title with selected cell kind
+    Cell selected_cell = this->ui.get_selected();
+    std::stringstream ss;
+    ss << "Sandbox (" << selected_cell.name << ")" << std::endl; 
+    glfwSetWindowTitle(this->window, ss.str().c_str());
+
     // Refresh stored mouse position
     this->update_mouse_pos();
 
-    // Update window title with selected cell kind
-    Cell cell_kind = this->ui.get_selected();
-    std::stringstream ss;
-    ss << "Sandbox (" << cell_kind.name << ")" << std::endl; 
-    glfwSetWindowTitle(this->window, ss.str().c_str());
+    if(this->ui.display) {
+        if (this->mouse_left) {
+            this->ui.make_selection(this->mouse_pos);   
+        }
 
-
-    // TODO: Is this good? Should we just keep updating UI anyway?
-    if (this->ui.display) {
-        this->ui.update(delta_time);
-    } else {
-
+        this->ui.update(delta_time);    
+    }
+    else {
         // TODO: The whole mouse_in_view is gross but I kinda have to because 
         // 1. cell_positions are unsigned, 2. mouse can have negative values
         // so need to convert between these.
-        if (this->mouse_in_view) {   
+        if (this->mouse_in_view) {
             // TODO: This feels slightly gross; I feel like the World itself should worry about this stuff
             // Set cells based on mouse input
             if (this->mouse_left) {
-                this->world.get_grid()->set_cell(this->mouse_pos, cell_kind);
+                this->world.get_grid()->set_cell(this->mouse_pos, selected_cell);
             } else if (this->mouse_right) {
                 this->world.get_grid()->set_cell(this->mouse_pos, Cell::Empty());
             }
         }
-    
-        // Update world
+
         this->world.update(delta_time);
+    }
+}
+
+void Game::fixed_update(double delta_time) {
+    if (this->ui.display) {
+        this->ui.fixed_update(delta_time);
+    } else {
+        // Update world
+        this->world.fixed_update(delta_time);
     }
 }
 
@@ -142,11 +151,6 @@ void Game::on_mouse(__unused int button, __unused int action, __unused int mods)
             this->mouse_left = true;
             // Need to disable the other mouse button just in case
             this->mouse_right = false;
-
-            if (this->ui.display) {
-                // TODO: This feels a little un-clean but w/e?
-                this->ui.make_selection(this->mouse_pos);
-            }
         }
         else if (action == GLFW_RELEASE) {
             this->mouse_left = false;

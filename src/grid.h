@@ -91,7 +91,9 @@ public:
 
     GLuint get_texture() const;
 
-    /** Simulate the grid. */
+    /** Update the texture for the grid. */
     void update(double delta_time);
+    /** Simulate the grid. */
+    void fixed_update(double delta_time);
 };
 #endif

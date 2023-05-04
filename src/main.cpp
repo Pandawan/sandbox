@@ -29,13 +29,20 @@ int main(__unused int argc, __unused char* argv[])
     
     // Engine loop
     double last_frame = 0;
+    double last_fixed_update = 0;
     while (!glfwWindowShouldClose(window))
     {
         double current_frame = glfwGetTime();
+
         double delta_time = current_frame - last_frame;
+        game.update(delta_time);
         last_frame = current_frame;
 
-        game.update(delta_time);
+        double fixed_delta_time = current_frame - last_fixed_update;
+        if (fixed_delta_time > 0.016) {
+            game.fixed_update(fixed_delta_time);
+            last_fixed_update = current_frame;
+        }
 
         /* Render here */
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

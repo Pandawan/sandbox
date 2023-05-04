@@ -23,6 +23,7 @@ public:
     Grid* get_grid();
 
     void update(double delta_time);
+    void fixed_update(double delta_time);
     void render();
 };
 

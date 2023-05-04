@@ -29,6 +29,10 @@ void UI::update(double delta_time) {
     grid.update(delta_time);
 }
 
+void UI::fixed_update(double delta_time) {
+    grid.fixed_update(delta_time);
+}
+
 void UI::render() {
     quad.render();
 }
